@@ -3,6 +3,7 @@
     internal class WorkTask : Issue, IReportable
     {
         public int EstimatedHours { get; set; }
+        
 
         public WorkTask(int id, string title, string assignedTo, int estimatedHours)
             : base(id, title, assignedTo)
