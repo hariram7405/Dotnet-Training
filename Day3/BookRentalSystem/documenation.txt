@@ -1,0 +1,465 @@
+
+
+# **Book Rental System - Documentation**
+
+### Overview
+
+The **Book Rental System** is a simple, console-based .NET (C#) application that simulates the operations of a library system. It allows for managing different types of books, renting and returning them, checking their availability, and searching for books by title. The system follows object-oriented programming (OOP) principles like inheritance, abstraction, and interface implementation.
+
+---
+
+### Features
+
+* ✅ Rent and return books
+* 📚 Manage Fiction and Non-Fiction books
+* 🔍 Search for a book by its title
+* 📋 Display all books with their details
+* 📅 Generate status reports with timestamps
+* 🧩 Built using abstraction, inheritance, polymorphism, and interfaces
+
+---
+
+### Components Overview
+
+| Component      | Type        | Description                                                                         |
+| -------------- | ----------- | ----------------------------------------------------------------------------------- |
+| `Book`         | Class       | Base class that defines common attributes like ID, Title, Author, and Status.       |
+| `Fiction`      | Class       | Inherits from `Book`; includes a `genre` field and implements `IRentable`.          |
+| `NonFiction`   | Class       | Inherits from `Book`; includes a `category` field and implements `IRentable`.       |
+| `IRentable`    | Interface   | Declares `Rent()`, `Return()`, and `ReportStatus()` methods for rental logic.       |
+| `BookServices` | Class       | Implements `IServicable`; handles renting, returning, displaying, and searching.    |
+| `IServicable`  | Interface   | Declares service methods: `RentBook()`, `ReturnBook()`, `DisplayAll()`, `Search()`. |
+| `Program.cs`   | Entry Point | Creates sample books, uses services, and simulates a rental flow.                   |
+
+---
+
+### Workflow
+
+1. 📚 **Initialization**: Fiction and NonFiction book objects are created.
+2. 🔄 **Renting**: Books are rented using service methods and status updated.
+3. 📢 **Status Reporting**: Status reports are printed with timestamped output.
+4. 📦 **Returning**: Books are returned and availability updated.
+5. 🔍 **Searching**: A search function looks for a book by its title.
+6. 🧾 **Display**: All books are displayed in a formatted list with count.
+
+---
+### Project Structure
+  📁 BookRentalSystem
+├── 📁 Models
+│   ├── 📄 Book.cs
+│   ├── 📄 Fiction.cs
+│   ├── 📄 NonFiction.cs
+│   ├── 📄 IRentable.cs
+│
+├── 📁 Services
+│   ├── 📄 BookServices.cs
+│   ├── 📄 IServicable.cs
+│
+├── 📄 Program.cs
+├── 📄 README.md (or .txt)
+
+#Code
+Book.cs
+'''
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BookRentalSystem.Models
+{
+   public class Book
+    {
+        public int id { get; set; }
+        public string title { get; set; }
+        public string author { get; set; }
+        public string isAvailable { get; set; }
+        public Book (int id,string title,string author,string isAvailable)
+        {
+            this.id = id;
+            this.title = title;
+            this.author = author;
+            this.isAvailable= isAvailable;
+        }
+        public virtual void Display()
+        {
+            Console.WriteLine($"Book Id :{id}");
+            Console.WriteLine($"Book Title: {title}");
+            Console.WriteLine($"Book Author: {author}");
+            Console.WriteLine($"Book Status:{isAvailable}");
+        }
+    }
+}
+'''
+Fiction.cs
+'''
+  using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BookRentalSystem.Models; 
+
+namespace BookRentalSystem.Models
+{
+   public class Fiction:Book,IRentable
+    {
+        public string genre;
+        public Fiction(int id, string title, string author, string isAvailable,string genre)
+            :base(id,  title, author,  isAvailable)
+        {
+             this.genre=genre;
+
+        }
+        public override void Display()
+        {
+            Console.WriteLine("-----------Fiction----------");
+            Console.WriteLine($"Book Id :{id}");
+            Console.WriteLine($"Book Title: {title}");
+            Console.WriteLine($"Book Author: {author}");
+            Console.WriteLine($"Book Genre:{genre}");
+            Console.WriteLine();
+        }
+          
+        public void Rent()
+        {
+            isAvailable="Not Available";
+        }
+        public void Return()
+        {
+            isAvailable="Available";
+        }
+        public void ReportStatus()
+        {
+            Console.WriteLine("*************Report**************");
+            Console.WriteLine("Report Generated as on :" + DateTime.Now);
+            Console.WriteLine($"Book Id :{id}");
+            Console.WriteLine($"Book Title: {title}");
+            Console.WriteLine($"Book Author: {author}");
+            Console.WriteLine($"Book Genre:{genre}");
+            Console.WriteLine($"Book Status:{isAvailable}");
+            Console.WriteLine();
+        }
+    }
+}
+
+ '''
+  IRentable.cs
+  '''
+   using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BookRentalSystem.Models; 
+
+namespace BookRentalSystem.Models
+{
+    public interface IRentable
+    {
+       public void Rent();
+       public void Return();
+       public  void ReportStatus();
+    }
+}
+
+'''
+NonFiction.cs
+'''
+  using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BookRentalSystem.Models; 
+
+namespace BookRentalSystem.Models
+{
+    public class NonFiction : Book,IRentable
+    {
+        public string category;
+        public NonFiction(int id, string title, string author, string isAvailable, string category)
+            : base(id, title, author, isAvailable)
+        {
+         this.category=category;
+
+        }
+        public override void Display()
+        {
+            Console.WriteLine("-----------Non Fiction----------");
+            Console.WriteLine($"Book Id :{id}");
+            Console.WriteLine($"Book Title: {title}");
+            Console.WriteLine($"Book Author: {author}");
+            Console.WriteLine($"Book category:{category}");
+            Console.WriteLine();
+        }
+      
+        public void Rent()
+        {
+            isAvailable="   Not Available";
+        }
+        public void Return()
+        {
+            isAvailable = "Available";
+        }
+        public void ReportStatus()
+        {
+            Console.WriteLine("*************Report**************");
+            Console.WriteLine("Report Generated as on :" + DateTime.Now);
+            Console.WriteLine($"Book Id :{id}");
+            Console.WriteLine($"Book Title: {title}");
+            Console.WriteLine($"Book Author: {author}");
+            Console.WriteLine($"Book Category:{category}");
+            Console.WriteLine($"Book Status:{isAvailable}");
+            Console.WriteLine();
+        }
+
+    }
+}
+
+'''
+BookService.cs
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BookRentalSystem.Models; 
+
+
+namespace BookRentalSystem.Services
+{
+    public class BookServices : IServicable
+    {
+        public void RentBook(Book book)
+        {
+            Console.WriteLine($"{book.title} has been Rented");
+        }
+        public void ReturnBook(Book book)
+        {
+            Console.WriteLine($"{book.title} has been Returned");
+        }
+
+        public void DisplayAll(List<Book> books)
+        {
+            int cnt = 0;
+
+            foreach (Book x in  books)
+            {
+            cnt++;
+             Console.WriteLine($"Book {cnt}");
+            Console.WriteLine($"Book Id:{x.id}");
+            Console.WriteLine($"Book Title:{x.title}");
+            Console.WriteLine($"Book Author:{x.author}");
+            Console.WriteLine();
+
+        }
+        if(cnt==0){
+        Console.WriteLine("No Book is Available Write Now! Please Check after some time");
+    }
+else
+{
+    Console.WriteLine($"Total Number of Book Available:{cnt }");
+}
+}
+public void Search(List<Book> book, String bookName)
+{
+    int cnt = 0;
+    foreach (Book x in book){
+    if(x.title.Equals(bookName)){
+    Console.WriteLine($"{bookName}Book is Available");
+cnt = 1;
+break;
+}
+
+}
+if (cnt == 0)
+{
+    Console.WriteLine($"{bookName} book is not Available");
+}
+}
+}
+
+}
+
+  ```
+IServicable.cs
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BookRentalSystem.Models; // Add this at the top
+
+namespace BookRentalSystem.Services
+{
+    public interface IServicable
+    {
+        public void RentBook(Book book);
+        public void ReturnBook(Book book);
+        public void DisplayAll(List<Book> books);
+        public void Search(List <Book> books,string bookName);
+        
+
+
+    }
+}
+```
+Program.cs
+```
+  using System;
+using System.Collections.Generic;
+using BookRentalSystem.Models;
+using BookRentalSystem.Services;
+
+class Program
+{
+    public static void Main(string[] args)
+    {
+        // Create book list
+        List<Book> books = new List<Book>();
+
+        // Create Fiction and NonFiction books
+        Fiction f1 = new Fiction(5001, "The Mystery Case", "Lokesh", "Available", "Drama");
+        NonFiction n1 = new NonFiction(4001, "The Universe Explained", "Smith", "Available", "Science");
+
+        // Add books to list
+        books.Add(f1);
+        books.Add(n1);
+
+        // Use service via interface (DIP)
+        IServicable bookService = new BookServices();
+
+        // Display initial book info
+        Console.WriteLine("=== Initial Book Display ===");
+        Console.WriteLine();
+        f1.Display();
+        n1.Display();
+
+        // Rent books
+        f1.Rent();
+        n1.Rent();
+
+        // Service logs
+        bookService.RentBook(f1);
+        bookService.RentBook(n1);
+
+        // Report status after renting
+        Console.WriteLine("\n=== After Renting ===");
+        Console.WriteLine();
+        f1.ReportStatus();
+        n1.ReportStatus();
+
+        // Return books
+        f1.Return();
+        n1.Return();
+
+        // Service logs
+        bookService.ReturnBook(f1);
+        bookService.ReturnBook(n1);
+
+        // Report status after return
+        Console.WriteLine("\n=== After Returning ===");
+        f1.ReportStatus();
+        n1.ReportStatus();
+
+        // Search for a specific book
+        Console.WriteLine("\n=== Search Book ===");
+        bookService.Search(books, "The Mystery Case");
+
+        // Display all books
+        Console.WriteLine("\n=== Display All Books ===");
+        bookService.DisplayAll(books);
+    }
+}
+
+```
+#output
+```
+  === Initial Book Display ===
+
+-----------Fiction----------
+Book Id :5001
+Book Title: The Mystery Case
+Book Author: Lokesh
+Book Genre:Drama
+
+-----------Non Fiction----------
+Book Id :4001
+Book Title: The Universe Explained
+Book Author: Smith
+Book category:Science
+
+The Mystery Case has been Rented
+The Universe Explained has been Rented
+
+=== After Renting ===
+
+*************Report**************
+Report Generated as on :7/24/2025 10:56:13 PM
+Book Id :5001
+Book Title: The Mystery Case
+Book Author: Lokesh
+Book Genre:Drama
+Book Status:Not Available
+
+*************Report**************
+Report Generated as on :7/24/2025 10:56:13 PM
+Book Id :4001
+Book Title: The Universe Explained
+Book Author: Smith
+Book Category:Science
+Book Status:   Not Available
+
+The Mystery Case has been Returned
+The Universe Explained has been Returned
+
+=== After Returning ===
+*************Report**************
+Report Generated as on :7/24/2025 10:56:13 PM
+Book Id :5001
+Book Title: The Mystery Case
+Book Author: Lokesh
+Book Genre:Drama
+Book Status:Available
+
+*************Report**************
+Report Generated as on :7/24/2025 10:56:13 PM
+Book Id :4001
+Book Title: The Universe Explained
+Book Author: Smith
+Book Category:Science
+Book Status:Available
+
+=== Search Book ===
+The Mystery CaseBook is Available
+
+=== Display All Books ===
+Book 1
+Book Id:5001
+Book Title:The Mystery Case
+Book Author:Lokesh
+
+Book 2
+Book Id:4001
+Book Title:The Universe Explained
+Book Author:Smith
+
+Total Number of Book Available:2
+
+```
+#Commands to run
+dotnet build
+dotnet run
+
+  
+### Technologies Used
+
+* 👨‍💻 C#
+* ⚙️ .NET Console Application
+* 📦 OOP (Object-Oriented Programming)
+
+--
