@@ -108,7 +108,6 @@ Changing feature1 status to Resolved:
 Status changed to Resolved successfully.
 ```
 
----
 
 ## 🛠 How It Works
 
@@ -120,7 +119,5 @@ Status changed to Resolved successfully.
 ---
 Thank you for exploring **Phase2IssueTracker**!
 Happy coding! 🚀
-
-```
 
 
