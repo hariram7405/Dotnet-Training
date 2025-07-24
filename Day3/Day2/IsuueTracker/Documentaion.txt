@@ -1,0 +1,219 @@
+IssueTracker - Technical Documentation
+
+1. Project Overview
+-------------------
+IssueTracker is a C# console application for managing software issues like bugs and work tasks. 
+It demonstrates fundamental object-oriented programming concepts such as abstraction, 
+inheritance, interfaces, and polymorphism. The application maintains a list of issues, displays 
+their details, and reports their status using a common interface.
+
+2. Features
+-----------
+- Manage multiple types of issues: Bug and WorkTask
+- Abstract base class 'Issue' with common properties and methods
+- Interface 'IReportable' for standardized status reporting
+- Polymorphic behavior enables uniform handling of different issue types
+- Clean modular design for easy extension and maintenance
+
+3. Project Structure
+--------------------
+IssueTracker/
+  Models/
+    Bug.cs           - Bug class with Severity property and status reporting
+    Issue.cs         - Abstract base class defining common properties and methods
+    WorkTask.cs      - WorkTask class with EstimatedHours and status reporting
+    IReportable.cs   - Interface defining ReportStatus() method
+  Program.cs         - Main application logic that creates, stores, and displays issues
+
+4. Class Design and Details
+---------------------------
+
+4.1 Abstract Base Class: Issue
+------------------------------
+Purpose:
+Defines shared properties and an abstract method for all issue types.
+
+Properties:
+- Id (int): Unique identifier for the issue.
+- Title (string): Issue title or description.
+- Assignedto (string): Person assigned to the issue.
+
+Methods:
+- Display() (abstract): Displays issue-specific details.
+
+Code:
+----------
+namespace IsuueTracker.Models
+{
+    public abstract class Issue
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Assignedto { get; set; }
+
+        public Issue(int id, string title, string assignedto)
+        {
+            Id = id;
+            Title = title;
+            Assignedto = assignedto;
+        }
+
+        public abstract void Display();
+    }
+}
+
+4.2 Interface: IReportable
+--------------------------
+Purpose:
+Defines a contract for reporting the status of an issue.
+
+Method:
+- ReportStatus(): Outputs the current status of the issue.
+
+Code:
+----------
+namespace IsuueTracker.Models
+{
+    internal interface IReportable
+    {
+        void ReportStatus();
+    }
+}
+
+4.3 Derived Class: Bug
+----------------------
+Inherits from Issue and implements IReportable.
+
+Additional Property:
+- Severity (string): Severity level (e.g., Critical, High).
+
+Methods:
+- Display(): Displays bug details.
+- ReportStatus(): Reports bug-specific status.
+
+Code:
+----------
+using System;
+
+namespace IsuueTracker.Models
+{
+    public class Bug : Issue, IReportable
+    {
+        public string Severity { get; set; }
+
+        public Bug(int id, string title, string assignedto, string severity)
+            : base(id, title, assignedto)
+        {
+            Severity = severity;
+        }
+
+        public override void Display()
+        {
+            Console.WriteLine($"[BUG] #{Id}: {Title} | Severity: {Severity} | Assigned to: {Assignedto}");
+        }
+
+        public void ReportStatus()
+        {
+            Console.WriteLine($"Bug #{Id} is under investigation. It is still in progress.");
+        }
+    }
+}
+
+4.4 Derived Class: WorkTask
+---------------------------
+Inherits from Issue and implements IReportable.
+
+Additional Property:
+- EstimatedHours (int): Estimated time to complete the task.
+
+Methods:
+- Display(): Displays task details.
+- ReportStatus(): Reports task-specific status.
+
+Code:
+----------
+using System;
+
+namespace IsuueTracker.Models
+{
+    internal class WorkTask : Issue, IReportable
+    {
+        public int EstimatedHours { get; set; }
+
+        public WorkTask(int id, string title, string assignedTo, int estimatedHours)
+            : base(id, title, assignedTo)
+        {
+            EstimatedHours = estimatedHours;
+        }
+
+        public override void Display()
+        {
+            Console.WriteLine($"[Task] #{Id}: {Title} | Estimated Hours: {EstimatedHours} | Assigned to: {Assignedto}");
+        }
+
+        public void ReportStatus()
+        {
+            Console.WriteLine($"Task #{Id} is in progress. Estimated time: {EstimatedHours} hours.");
+        }
+    }
+}
+
+5. Program Flow (Program.cs)
+----------------------------
+- Create a list of Issue objects.
+- Instantiate Bug and WorkTask objects.
+- Add these objects to the list.
+- Iterate through the list:
+    - Call Display() to show issue details.
+    - If the issue implements IReportable, call ReportStatus() to show status.
+- Wait for user input before exiting.
+
+Code:
+----------
+using System;
+using System.Collections.Generic;
+using IsuueTracker.Models;
+
+class Program
+{
+    static void Main()
+    {
+        List<Issue> issues = new List<Issue>();
+
+        Bug bug1 = new Bug(1, "App crashes on login", "Ravi", "Critical");
+        WorkTask task1 = new WorkTask(2, "Page not loading", "Anita", 6);
+
+        issues.Add(bug1);
+        issues.Add(task1);
+
+        Console.WriteLine("All Issues:\n");
+
+        foreach (Issue issue in issues)
+        {
+            issue.Display();
+
+            if (issue is IReportable reportable)
+            {
+                reportable.ReportStatus();
+            }
+
+            Console.WriteLine();
+        }
+
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey();
+    }
+}
+
+6. Object-Oriented Concepts Demonstrated
+----------------------------------------
+- Abstraction: Abstract base class Issue enforces a template for all issues.
+- Inheritance: Bug and WorkTask extend Issue adding specialized properties.
+- Interfaces: IReportable interface defines a contract for status reporting.
+- Polymorphism: Issues handled uniformly via Issue reference and IReportable interface.
+
+
+
+9. License
+----------
+This project is open source and free to use under your chosen license.

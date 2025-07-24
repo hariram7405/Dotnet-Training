@@ -1,0 +1,15 @@
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\bin\Debug\net8.0\Day1Project2.exe
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\bin\Debug\net8.0\Day1Project2.deps.json
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\bin\Debug\net8.0\Day1Project2.runtimeconfig.json
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\bin\Debug\net8.0\Day1Project2.dll
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\bin\Debug\net8.0\Day1Project2.pdb
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\obj\Debug\net8.0\Day1Project2.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\obj\Debug\net8.0\Day1Project2.AssemblyInfoInputs.cache
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\obj\Debug\net8.0\Day1Project2.AssemblyInfo.cs
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\obj\Debug\net8.0\Day1Project2.csproj.CoreCompileInputs.cache
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\obj\Debug\net8.0\Day1Project2.sourcelink.json
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\obj\Debug\net8.0\Day1Project2.dll
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\obj\Debug\net8.0\refint\Day1Project2.dll
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\obj\Debug\net8.0\Day1Project2.pdb
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\obj\Debug\net8.0\Day1Project2.genruntimeconfig.cache
+C:\Users\harirl\source\repos\Dotnet Training\Day 1\Day1Project2\obj\Debug\net8.0\ref\Day1Project2.dll
