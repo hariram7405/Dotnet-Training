@@ -123,7 +123,4 @@ Happy coding! 🚀
 
 ```
 
----
 
-If you want me to generate a LICENSE file or add badges/CI instructions, just ask!
-```
