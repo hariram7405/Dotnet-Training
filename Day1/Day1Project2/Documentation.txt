@@ -206,4 +206,4 @@ Is Resolved: True
 Assigned To: Anu (ID: 1)
 ```
 
-* GitHub: [https://github.com/hariram7405/Dotnet-Training/new/main/Day1/Day1Project2](https://github.com/hariram7405/Dotnet-Training/tree/main/Day1/Day1Project2)
+* GitHub: (https://github.com/hariram7405/Dotnet-Training/tree/main/Day1/Day1Project2)
