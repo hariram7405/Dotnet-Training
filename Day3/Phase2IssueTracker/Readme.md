@@ -112,7 +112,7 @@ Status changed to Resolved successfully.
 
 ## 🙋 Author
 
-Created by **Har Ram L**  
+Created by **Hari Ram L**  
 🔗 [GitHub Profile](https://github.com/hariram7405)
 ```
 
