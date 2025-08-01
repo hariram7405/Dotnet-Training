@@ -335,10 +335,10 @@ Exiting application...
 ```
 
 ---
+---
 ### SAMPLE SCREENSHOTS
 
-
-<img src="https://github.com/hariram7405/Dotnet-Training/raw/main/Day9/Assessment/Assessment/Screenshots/Ouput1.Png" width="600" />
+![Application Output](https://github.com/hariram7405/Dotnet-Training/blob/main/Day9/Assessment/Assessment/Screenshots/Output.png?raw=true)
 
 ### AUTHOR
 **Hari Ram L**
