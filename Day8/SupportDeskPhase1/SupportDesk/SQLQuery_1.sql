@@ -1,0 +1,30 @@
+
+CREATE TABLE Users (
+    UserId INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE Tickets (
+    TicketId INT IDENTITY(1,1) PRIMARY KEY,
+    TicketTitle NVARCHAR(200) NOT NULL,
+    UserId INT NOT NULL,
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+   
+);
+
+
+CREATE TABLE Tags (
+    TagId INT IDENTITY(1,1) PRIMARY KEY,
+    TagName NVARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE TicketTags (
+    TicketId INT NOT NULL,
+    TagId INT NOT NULL,
+    PRIMARY KEY (TicketId, TagId), 
+    FOREIGN KEY (TicketId) REFERENCES Tickets(TicketId) ON DELETE CASCADE,
+    FOREIGN KEY (TagId) REFERENCES Tags(TagId) ON DELETE CASCADE  
+);
+
