@@ -1,12 +1,18 @@
-﻿using System;
+﻿using EmployeeTracker.Core.Entities;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeTracker.Core.Interfaces
 {
-    internal interface IEmployeeService
+    public interface IEmployeeService
     {
+        void AddEmployee(Employee employee);
+        void DeleteEmployee(int id);
+        void UpdateEmployee(Employee employee);
+        IEnumerable<Employee> GetAll();
+       
+        IEnumerable<Employee> GetEmployeesByDepartment(int departmentId);
+        int GetEmployeeCount();
+        void DisplayEmployee();
+        int Exists(int id);
     }
 }

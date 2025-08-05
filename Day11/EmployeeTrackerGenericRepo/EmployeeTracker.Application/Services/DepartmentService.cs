@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeTracker.Application.Services
 {
- public  class DepartmentService
+ public  class DepartmentService:IDepartmentService
     {
         private readonly IDepartmentRepository _repository;
         public DepartmentService(IDepartmentRepository repository)
