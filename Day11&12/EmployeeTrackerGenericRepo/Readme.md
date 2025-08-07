@@ -1,8 +1,8 @@
 
 
-# 🧾 EmployeeMapperRepo
+# 🧾 EmployeeTrackerGenericRepo
 
-A clean, modular **.NET 6 Console Application** for managing Employees and Departments using the **Generic Repository Pattern**, **AutoMapper**, and **Onion Architecture**.
+A clean, modular **.NET 6 Console Application** to manage Employees and Departments using the **Generic Repository Pattern** and **Onion Architecture**.
 
 ---
 
@@ -10,125 +10,60 @@ A clean, modular **.NET 6 Console Application** for managing Employees and Depar
 
 To demonstrate:
 
-* ✅ Clean layered architecture with separation of concerns
-* ✅ Generic repository pattern implementation
-* ✅ AutoMapper usage between entities and DTOs
-* ✅ Interface-driven programming (SOLID principles)
-* ✅ Manual dependency injection
-* ✅ In-memory data management (no DB required)
+* Clean separation of concerns with **Layered Architecture**
+* Implementation of a reusable **Generic Repository**
+* Use of **SOLID principles** (especially Dependency Inversion and Interface Segregation)
+* In-memory simulation of CRUD operations before integrating a real database
 
 ---
 
 ## 📦 Tech Stack
 
-| Technology         | Usage                      |
-| ------------------ | -------------------------- |
-| .NET 6             | Core runtime & SDK         |
-| C#                 | Programming language       |
-| Console App        | Presentation/UI layer      |
-| AutoMapper         | Entity <-> DTO conversion  |
-| Generic Repository | Abstract data access logic |
-| Onion Architecture | Modular layering           |
+| Technology                                                       | Usage                        |
+| ---------------------------------------------------------------- | ---------------------------- |
+| [.NET 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) | Core framework               |
+| C#                                                               | Programming language         |
+| Console Application                                              | UI Layer                     |
+| Generic Repository Pattern                                       | Abstraction over data access |
+| Manual Dependency Injection                                      | No third-party DI tools      |
 
 ---
 
-## 🛠 Setup Instructions
-
-### 📁 Create Solution and Projects
-
-```bash
-cd "C:\Users\harirl\source\repos\.Net Training\Day11"
-
-mkdir EmployeeMapper
-cd EmployeeMapper
-
-dotnet new sln -n EmployeeMapperRepo
-
-dotnet new classlib -n EmployeeMapper.Core
-dotnet new classlib -n EmployeeMapper.Infrastructure
-dotnet new classlib -n EmployeeMapper.Application
-dotnet new console -n EmployeeMapper.ConsoleUI
-```
-
-### ➕ Add Projects to Solution
-
-```bash
-dotnet sln add EmployeeMapper.ConsoleUI/EmployeeMapper.ConsoleUI.csproj
-dotnet sln add EmployeeMapper.Application/EmployeeMapper.Application.csproj
-dotnet sln add EmployeeMapper.Infrastructure/EmployeeMapper.Infrastructure.csproj
-dotnet sln add EmployeeMapper.Core/EmployeeMapper.Core.csproj
-```
-
-### 🔗 Add Project References
-
-```bash
-dotnet add EmployeeMapper.Infrastructure/EmployeeMapper.Infrastructure.csproj reference EmployeeMapper.Core/EmployeeMapper.Core.csproj
-
-dotnet add EmployeeMapper.Application/EmployeeMapper.Application.csproj reference EmployeeMapper.Core/EmployeeMapper.Core.csproj
-dotnet add EmployeeMapper.Application/EmployeeMapper.Application.csproj reference EmployeeMapper.Infrastructure/EmployeeMapper.Infrastructure.csproj
-
-dotnet add EmployeeMapper.ConsoleUI/EmployeeMapper.ConsoleUI.csproj reference EmployeeMapper.Application/EmployeeMapper.Application.csproj
-```
-
-### 📦 Install NuGet Packages
-
-Install AutoMapper in Application and ConsoleUI:
-
-```bash
-# In Application
-cd EmployeeMapper.Application
-dotnet add package AutoMapper --version 12.0.0
-dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection
-
-# In ConsoleUI
-cd ../EmployeeMapper.ConsoleUI
-dotnet add package AutoMapper --version 12.0.0
-dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection
-```
-
----
-
-## 🧱 Final Project Structure
+## 🧱 Project Structure
 
 ```
-EmployeeMapperRepo/
+EmployeeTrackerGenericRepo/
 │
-├── EmployeeMapper.Core/
-│   ├── DTOs/
-│   │   ├── DepartmentRequest.cs
-│   │   ├── DepartmentResponse.cs
-│   │   ├── EmployeeRequest.cs
-│   │   └── EmployeeResponse.cs
+├── EmployeeTracker.Core/
 │   ├── Entities/
 │   │   ├── Employee.cs
 │   │   └── Department.cs
-│   └── Interfaces/
-│       ├── IRepository<T>.cs
-│       ├── IDepartmentRepository.cs
-│       ├── IEmployeeRepository.cs
-│       ├── IEmployeeService.cs
-│       └── IDepartmentService.cs
+│   ├── Interfaces/
+│   │   ├── IRepository<T>.cs
+│   │   ├── IEmployeeRepository.cs
+│   │   ├── IDepartmentRepository.cs
+│   │   ├── IEmployeeService.cs
+│   │   └── IDepartmentService.cs
 │
-├── EmployeeMapper.Infrastructure/
+├── EmployeeTracker.Infrastructure/
 │   └── Repositories/
-│       ├── DepartmentRepository.cs
-│       └── EmployeeRepository.cs
+│       ├── EmployeeRepository.cs
+│       └── DepartmentRepository.cs
 │
-├── EmployeeMapper.Application/
-│   ├── Services/
-│   │   ├── DepartmentService.cs
-│   │   └── EmployeeService.cs
-│   └── Mapping/
-│       └── MappingProfile.cs
+├── EmployeeTracker.Application/
+│   └── Services/
+│       ├── EmployeeService.cs
+│       └── DepartmentService.cs
 │
-├── EmployeeMapper.ConsoleUI/
+├── EmployeeTracker.ConsoleUI/
 │   ├── Program.cs
 │   └── Menu.cs (optional)
 │
-└── EmployeeMapperRepo.sln
+└── EmployeeTrackerGenericRepo.sln
 ```
 
 ---
+
 ## 🏗️ Architecture Overview
 
 This project follows the **Onion Architecture** (a layered approach) to ensure separation of concerns:
@@ -142,147 +77,222 @@ This project follows the **Onion Architecture** (a layered approach) to ensure s
 
 ---
 
+## 🛠️ Solution Setup Guide
+
+### Step 1: Create Solution and Projects
+
+```bash
+cd "C:\Users\harirl\source\repos\.Net Training\Day11"
+
+mkdir EmployeeTrackerGenericRepo
+cd EmployeeTrackerGenericRepo
+
+dotnet new sln -n EmployeeTrackergenericRepo
+
+dotnet new classlib -n EmployeeTracker.Core
+dotnet new classlib -n EmployeeTracker.Infrastructure
+dotnet new classlib -n EmployeeTracker.Application
+dotnet new console -n EmployeeTracker.ConsoleUI
+```
+
+### Step 2: Add Projects to Solution
+
+```bash
+dotnet sln add EmployeeTracker.Core/EmployeeTracker.Core.csproj
+dotnet sln add EmployeeTracker.Infrastructure/EmployeeTracker.Infrastructure.csproj
+dotnet sln add EmployeeTracker.Application/EmployeeTracker.Application.csproj
+dotnet sln add EmployeeTracker.ConsoleUI/EmployeeTracker.ConsoleUI.csproj
+```
+
+### Step 3: Add Project References
+
+```bash
+# Infrastructure depends on Core
+dotnet add EmployeeTracker.Infrastructure/EmployeeTracker.Infrastructure.csproj reference EmployeeTracker.Core/EmployeeTracker.Core.csproj
+
+# Application depends on Core and Infrastructure
+dotnet add EmployeeTracker.Application/EmployeeTracker.Application.csproj reference EmployeeTracker.Core/EmployeeTracker.Core.csproj
+dotnet add EmployeeTracker.Application/EmployeeTracker.Application.csproj reference EmployeeTracker.Infrastructure/EmployeeTracker.Infrastructure.csproj
+
+# Console UI depends on Application
+dotnet add EmployeeTracker.ConsoleUI/EmployeeTracker.ConsoleUI.csproj reference EmployeeTracker.Application/EmployeeTracker.Application.csproj
+```
+
 ---
+
 ## 🧱 Entities
 
 | Entity         | Description                                              | Key Properties                                                                                               |
 | -------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | **Employee**   | Represents an individual employee in the company.        | - Unique ID <br> - Full Name <br> - Job Designation <br> - Department ID (links to Department) <br> - Salary |
 | **Department** | Represents a department or unit within the organization. | - Unique DeptId <br> - Department Name                                                                       |
+
 ---
 
 ## 🧩 Features
 
-### 🔹 Department
+### Department Module
 
-* Add Department
-* View All Departments
-* Update Department
-* Delete Department
+* Add, Update, Delete Departments
+* View all Departments
+* Get Department count
 
-### 🔹 Employee
+### Employee Module
 
-* Add Employee
-* View All Employees
-* Update Employee
-* Delete Employee
+* Add, Update, Delete Employees
+* View all Employees
+* Search Employees by Department
+* Get total Employee count
 
 ---
 
-## 🔁 AutoMapper Profile
+## 🔍 Concepts Applied
 
-**MappingProfile.cs** (inside `EmployeeMapper.Application.Mapping`):
+* Generic Repository (`IRepository<T>`)
+* Concrete Repositories (`EmployeeRepository`, `DepartmentRepository`)
+* Business Logic implemented via Services layer
+* Interface-driven architecture promoting loose coupling
+* Manual dependency injection (without external frameworks)
+* Clean Console UI with input validation
 
-```csharp
-using AutoMapper;
-using EmployeeMapper.Core.DTOs;
-using EmployeeMapper.Core.Entities;
+---
 
-public class MappingProfile : Profile
-{
-    public MappingProfile()
-    {
-        CreateMap<Employee, EmployeeResponse>().ReverseMap();
-        CreateMap<EmployeeRequest, Employee>().ReverseMap();
+## 🔧 Setup & Run Instructions
 
-        CreateMap<Department, DepartmentResponse>().ReverseMap();
-        CreateMap<DepartmentRequest, Department>().ReverseMap();
-    }
-}
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/yourusername/EmployeeTrackerGenericRepo.git
+cd EmployeeTrackerGenericRepo
+```
+
+2. **Build the solution**
+
+```bash
+dotnet build
+```
+
+3. **Run the application**
+
+```bash
+cd EmployeeTracker.ConsoleUI
+dotnet run
 ```
 
 ---
 
-## 🖥 Sample Console Output
+## 📷 Console Preview
 
+```text
+======= Employee Tracker Application =======
+1. Add Employee
+2. Update Employee
+3. Delete Employee
+4. Get Employee Count
+5. Search Employees By Department
+6. Show All Employees
+7. Add Department
+8. Update Department
+9. Delete Department
+10. Get Department Count
+11. Show All Departments
+12. Exit
+============================================
 ```
---- Employee Mapper Menu ---
-1. Add Department
-2. Add Employee
-3. View All Departments
-4. View All Employees
-5. Update Department
-6. Update Employee
-7. Delete Department
-8. Delete Employee
-9. Exit
-Select an option: 1
 
-Enter Department Name (required): IT
-Department added successfully.
-
-Select an option: 2
-Enter Employee Name (required): HARI RAM L
-Enter Designation (required): TRAINEE
-Enter Department Id (must exist): 1
-Enter Salary (positive number): 20000
-Employee added successfully.
-
---- Departments ---
-ID    Name
---------------------
-1     IT
-
---- Employees ---
-ID    Name          Designation    DeptId   Salary
-----------------------------------------------------
-1     HARI RAM L    TRAINEE        1        $20,000.00
-
-Select an option: 5
-Enter Department Id to update: 1
-Enter New Name: Information Technology
-Department updated.
-
-Select an option: 1
-Enter Department Name: HR
-Department added successfully.
-
-Select an option: 3
-
---- Departments ---
-ID    Name
---------------------
-1     Information Technology
-2     HR
-
-Select an option: 7
-Enter Department Id to delete: 2
-Department deleted.
-
-Select an option: 2
-Enter Employee Name: ARUN
-Enter Designation: DEVELOPER
-Enter Department Id: 2
-Department Id does not exist.
-Enter Department Id: 1
-Enter Salary: 20000
-Employee added successfully.
-
-Select an option: 4
-
---- Employees ---
-ID    Name          Designation    DeptId   Salary
-----------------------------------------------------
-1     HARI RAM L    TRAINEE        1        $20,000.00
-2     ARUN          DEVELOPER      1        $20,000.00
-
-Select an option: 9
-Exiting...
+## SAMPLE OUTPUT
 ```
+
+
+> Choice: 7  
+  Enter Department Name: HR  
+  HR:1 added.
+
+> Choice: 7  
+  Enter Department Name: IT  
+  IT:2 added.
+
+> Choice: 1  
+  Enter Employee Name: Hari  
+  Enter Designation: Intern Software  
+  Enter Department ID: 1  
+  Enter Salary: 75000  
+  Hari:100 added.
+
+> Choice: 1  
+  Enter Employee Name: Lokesh  
+  Enter Designation: Intern Software  
+  Enter Department ID: 1  
+  Enter Salary: 75000  
+  Lokesh:101 added.
+
+> Choice: 2  
+  Enter Employee ID to update: 101  
+  Enter Name: Lokeshwaran  
+  Enter Designation: Software Intern  
+  Enter Department ID: 1  
+  Enter Salary: 80000  
+  Employee Updated.
+
+> Choice: 3  
+  Enter Employee ID to delete: 100  
+  Employee Deleted.
+
+> Choice: 4  
+  Total Employees: 1
+
+> Choice: 5  
+  Enter Department ID: 1
+
+  101 | Lokeshwaran | Software Intern | DeptID: 1 | Salary: $80,000.00
+
+> Choice: 6  
+
+--- Employee List ---
+
+ID     Name           Designation       DeptId     Salary
+-------------------------------------------------------------
+101    Lokeshwaran    Software Intern   1          $80,000.00
+
+> Choice: 8  
+  Enter Department ID to update: 2  
+  Enter New Department Name: Information Technology  
+  Department Updated.
+
+> Choice: 9  
+  Enter Department ID to delete: 1  
+  Department Deleted.
+
+> Choice: 10  
+  Total Departments: 1
+
+> Choice: 11  
+
+--- Department List ---
+
+Dept ID    Department Name
+---------------------------
+2          Information Technology
+
+> Choice: 12  
+  Exiting application...
+
+
+---
+````
+
+## 🔍 Learning Outcomes
+
+* Deep understanding of the **Generic Repository Pattern**
+* Improved code modularity using **interface segregation**
+* Practical experience with **Clean Architecture** and layered design
+* Simulated business logic for real-world HR modules
 
 ---
 
-## ✅ Learning Outcomes
 
-* ✅ Implemented Generic Repository pattern
-* ✅ Understood AutoMapper for DTO mapping
-* ✅ Built a complete Console UI following Onion Architecture
-* ✅ Practiced clean architecture and SOLID principles
-* ✅ Manual DI without third-party frameworks
-* ✅ Validated inputs with clear user feedback
+## 👤 Author
+
+Hari Ram L
 
 ---
-
-## 👨‍💻 Author
-
-**Hari Ram L**
