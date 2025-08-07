@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BugTracker.Core.Entities
+{
+    public class Bug
+    {
+        public int Id { get; set; }
+        public required string Title { get; set; }
+        public required string Description { get; set; }  
+        public string Status { get; set; } = "Open";
+        public DateTime CreatedOn { get; set; }   
+        public int ProjectId { get; set; }    
+        public DateTime? DueDate { get; set; }    
+    }
+}
+
