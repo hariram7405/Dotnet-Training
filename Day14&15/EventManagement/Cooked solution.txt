@@ -1,0 +1,47 @@
+//Error Code
+/*public class EventService : IEventService
+{
+    private readonly IEventRepository _eventRepo;
+
+    public EventService(IEventRepository eventRepo)
+    {
+        _eventRepo = eventRepo;
+    }
+
+    public Event CreateEvent(Event event)
+    {
+        if (event.Title.Length < 0)
+            throw new Exception("Invalid title");
+
+        return _eventRepo.Add(event);
+    }
+}
+*/
+
+
+//Fixed error free code
+
+public class EventService : IEventService
+{
+    // Dependency injection: This allows us to interact with the event data source
+    private readonly IEventRepository _eventRepo;
+
+    // Constructor to initialize the event repository
+    public EventService(IEventRepository eventRepo)
+    {
+        _eventRepo = eventRepo;
+    }
+
+    // Method to create a new event
+    public Event CreateEvent(Event eventObj) // 'event' is a reserved keyword in C#, so renamed to 'eventObj'
+    {
+        // Original logic: 'event.Title.Length < 0' is invalid — string lengths are never negative
+        // New logic: check for null, empty, or whitespace-only titles
+        if (string.IsNullOrWhiteSpace(eventObj.Title))
+            throw new Exception("Invalid title");
+
+        // If title is valid, proceed to add the event via the repository
+        return _eventRepo.Add(eventObj);
+    }
+}
+
