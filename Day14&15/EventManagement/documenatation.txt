@@ -1,0 +1,1765 @@
+
+
+## 📖 1. Introduction
+
+This system is a modular, scalable, and testable **backend API** developed with **ASP.NET Core**. It facilitates the full lifecycle of **technical event management**, including event creation, user registration, and participation tracking. The solution is designed for easy migration to production with enhancements like EF Core integration, JWT authentication, cloud deployment, and database persistence.
+
+---
+
+## 🎯 2. Project Goals & Vision
+
+### ✅ Goals
+
+* Build a clean, modular API for event handling
+* Follow **Domain-Driven Design** principles
+* Implement **Repository & Service Layer Patterns**
+* Be **ready for production-scale extension**
+
+### 🌟 Vision
+
+To evolve this into a **multi-tenant SaaS platform** supporting:
+
+* Multi-role access (Admin, Attendee, Organizer)
+* Email notifications (SendGrid integration)
+* Real-time analytics (SignalR or WebSocket)
+* Payment and ticketing integration
+
+---
+
+## ⚙️ 3. Architecture Overview
+
+The Event Management System follows **Onion Architecture**, focusing on dependency inversion and separation of concerns.
+
+```text
+Infrastructure (Data access, Repositories)
+          ↑
+Application (Business logic, Services)
+          ↑
+Domain (Entities, Interfaces, Core Models)
+          ↑
+Presentation (API Controllers, UI)
+
+```
+### 🔄 Request Lifecycle
+
+```plaintext
+Client → Controller → Service → Repository → In-Memory Store (or Database)
+                        ↓
+                   DTO Mapping → API Response
+```
+
+---
+
+## 💻 4. Technologies Stack
+
+| Component             | Technology                     |
+| --------------------- | ------------------------------ |
+| Backend Framework     | ASP.NET Core Web API (.NET 6+) |
+| Language              | C#                             |
+| Documentation         | Swagger (Swashbuckle)          |
+| Dependency Management | Built-in DI Container          |
+| Data Store (Demo)     | In-memory Collections          |
+| Persistence (Prod)    | EF Core                        |
+| Data Query            | LINQ                           |
+| Validation            | Data Annotations               |
+| Testing (optional)    | xUnit, Moq                     |
+
+---
+
+## 🚀 5. Setup & Running Locally
+
+### 🛠️ Prerequisites
+
+* .NET 6 SDK or later
+* Visual Studio 2022+ / VS Code
+* Optional: Postman for API testing
+
+### 🧪 Run Instructions
+
+```bash
+git clone https://github.com/your-repo/EventManagement
+cd EventManagement
+
+dotnet restore
+dotnet run --project EventManagementAPI
+```
+
+### 🔍 Access Swagger UI
+
+```
+https://localhost:{PORT}/swagger
+```
+
+---
+
+## 🔍 6. Functional Modules Summary
+
+| Module        | Capabilities                                                |
+| ------------- | ----------------------------------------------------------- |
+| Events        | Create, fetch, and list events                              |
+| Users         | Register, retrieve user info                                |
+| Registrations | Register users to events; list event-specific registrations |
+
+---
+
+## 🔐 7. Security & Validation
+
+### 🔏 Input Validation
+
+```csharp
+[Required]
+[StringLength(100)]
+[EmailAddress]
+```
+
+### 🔐 Authentication Strategy (Suggested)
+
+* Use **JWT Bearer Tokens**
+* Protect all POST/PUT/DELETE endpoints
+* Use role-based claims: Admin, Organizer, Attendee
+
+```plaintext
+[Authorize(Roles = "Admin")]
+```
+
+---
+
+## 🧾 8. API Endpoints Summary
+
+### 🔹 Events
+
+| Method | Endpoint           | Description      |
+| ------ | ------------------ | ---------------- |
+| GET    | `/api/events`      | List all events  |
+| GET    | `/api/events/{id}` | Get event by ID  |
+
+
+### 🔹 Users
+
+| Method | Endpoint          | Description    |
+| ------ | ----------------- | -------------- |
+| GET    | `/api/users`      | List users     |
+| GET    | `/api/users/{id}` | Get user by ID |
+
+
+### 🔹 Registrations
+
+| Method | Endpoint                             | Description                    |
+| ------ | ------------------------------------ | ------------------------------ |
+| GET    | `/api/registrations/event/{eventId}` | All registrations for an event |
+
+---
+
+## 🧩 9. Core Data Models
+
+### 🎫 Event
+
+```csharp
+public class Event {
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public DateTime Date { get; set; }
+    public string Location { get; set; }
+    public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
+}
+```
+
+### 👤 User
+
+```csharp
+public class User {
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
+}
+```
+
+### 📝 Registration
+
+```csharp
+public class Registration {
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public int EventId { get; set; }
+    public DateTime RegistrationDate { get; set; }
+    public User User { get; set; }
+    public Event Event { get; set; }
+}
+```
+
+---
+
+## 🔧 10. Service Layer
+
+### ✅ Responsibilities
+
+| Service               | Functionality                            |
+| --------------------- | ---------------------------------------- |
+| `EventService`        | Event lifecycle handling                 |
+| `UserService`         | User CRUD and validation                 |
+| `RegistrationService` | Event-user linking, duplicate prevention |
+
+### ✨ Features
+
+* Implements service interfaces for loose coupling
+* Exception handling via custom `NotFoundException`
+* LINQ-based filtering and mapping to DTOs
+
+---
+
+## 🗃️ 11. Repository Pattern
+
+### 🔌 Interface
+
+```csharp
+public interface IRepository<T> where T : class {
+    void Add(T entity);
+    void Update(T entity);
+    void Delete(int id);
+    T? GetById(int id);
+    IEnumerable<T> GetAll();
+}
+```
+
+### 📦 Implementations
+
+* `EventRepository`
+* `UserRepository`
+* `RegistrationRepository`
+
+Replace with `DbContext` + `DbSet<T>` for production.
+
+---
+
+## 📁 12. Folder Structure (Best Practices)
+
+```
+EventManagement/
+├── EventManagement.Application/
+│   └── Services/
+│       ├── EventService.cs
+│       ├── RegistrationService.cs
+│       └── UserService.cs
+
+├── EventManagement.Core/
+│   ├── DTOs/
+│   │   ├── EventResponseDto.cs
+│   │   ├── RegistrationResponseDto.cs
+│   │   └── UserResponseDto.cs
+│   ├── Entities/
+│   │   ├── Event.cs
+│   │   ├── Registration.cs
+│   │   └── User.cs
+│   └── Interfaces/
+│       ├── IEventService.cs
+│       ├── IRegistrationService.cs
+│       ├── IRepository.cs
+│       └── IUserService.cs
+
+├── EventManagement.Infrastructure/
+│   └── Repositories/
+│       ├── EventRepository.cs
+│       ├── RegistrationRepository.cs
+│       └── UserRepository.cs
+
+├── EventManagementAPI/
+│   ├── Controllers/
+│   │   ├── EventController.cs
+│   │   ├── RegistrationController.cs
+│   │   └── UserController.cs
+│   └── Program.cs
+
+```
+---
+
+## 🧪 13. Seed Data (Demo Mode)
+
+### 📆 Events
+
+| ID | Title                     | Location  |
+| -- | ------------------------- | --------- |
+| 1  | ASP.NET Core Workshop     | Chennai   |
+| 2  | Cloud DevOps Bootcamp     | Bangalore |
+| 3  | Blazor WebAssembly Course | Hyderabad |
+
+### 👤 Users
+
+* Haripriya (`haripriya@example.com`)
+* Ram (`ram@example.com`)
+* Shiva (`shiva@example.com`)
+* Kavi (`kavi@example.com`)
+
+### 📋 Registrations
+
+* Haripriya: Event 1, 2
+* Ram: Event 1
+* Others: Event 3
+
+---
+
+## 🔄 14. Extending for Production
+
+| Area               | What to Add                                |
+| ------------------ | ------------------------------------------ |
+| Persistence        | Use **EF Core** with SQL Server/PostgreSQL |
+| Authentication     | Implement **JWT** with ASP.NET Identity    |
+| Frontend           | Connect with **React/Angular SPA**         |
+| Real-Time          | Use **SignalR** for live updates           |
+| File Uploads       | Add support for speaker bios, brochures    |
+| Email Notification | Integrate with **SendGrid / SMTP**         |
+| Background Jobs    | Use **Hangfire** for async notifications   |
+
+---
+
+## 🛡️ 15. Unit Testing Guidance
+
+| Layer        | Suggested Test Target         |
+| ------------ | ----------------------------- |
+| Services     | Business logic validation     |
+| Repositories | CRUD logic (with in-memory)   |
+| Controllers  | Request/response status codes |
+
+📦 Recommended tools: `xUnit`, `Moq`, `FluentAssertions`
+
+---
+
+## 🚀 16. Deployment Guidelines
+
+### 🧱 Hosting Options
+
+* Azure App Service (easy deploy from GitHub Actions)
+* AWS EC2 with Docker
+* IIS / Windows Server
+* Linux-based Docker deployment
+
+### 🔑 Environment Variables
+
+* Use `appsettings.{Environment}.json` for:
+
+  * DB connection strings
+  * JWT secrets
+---
+## 17 .Code
+  
+### 📁 **EventManagement.Application**
+
+* `Services/EventService.cs`
+```
+using EventManagement.Core.Entities;
+using EventManagement.Core.Interfaces;
+using System.Collections.Generic;
+
+namespace EventManagement.Application.Services
+{
+    public class EventService : IEventService
+    {
+        private readonly IRepository<Event> _eventRepository;
+
+        public EventService(IRepository<Event> eventRepository)
+        {
+            _eventRepository = eventRepository;
+        }
+
+        public void CreateEvent(Event eventObj)
+        {
+            _eventRepository.Add(eventObj);
+        }
+
+        public Event? GetEventById(int id)
+        {
+            return _eventRepository.GetById(id);
+        }
+
+        public IEnumerable<Event> GetAllEvents()
+        {
+            return _eventRepository.GetAll();
+        }
+    }
+}
+```
+# `Services/Registration.cs`
+```
+using EventManagement.Core.Entities;
+using EventManagement.Core.Interfaces;
+
+namespace EventManagement.Services
+{
+    public class RegistrationService : IRegistrationService
+    {
+        private readonly IRepository<Registration> _registrationRepository;
+
+        public RegistrationService(IRepository<Registration> registrationRepository)
+        {
+            _registrationRepository = registrationRepository;
+        }
+
+        public void RegisterUserForEvent(Registration registration)
+        {
+            _registrationRepository.Add(registration);
+        }
+
+        public IEnumerable<Registration> GetRegistrationsByEventId(int eventId)
+        {
+            return _registrationRepository
+                   .GetAll()
+                   .Where(r => r.EventId == eventId);
+        }
+
+        public IEnumerable<Registration> GetAllRegistrations()
+        {
+            return _registrationRepository.GetAll();
+        }
+    }
+}
+```
+* `Services/UserService.cs`
+```
+using EventManagement.Core.Entities;
+using EventManagement.Core.Interfaces;
+
+namespace EventManagement.Services
+{
+    public class UserService : IUserService
+    {
+        private readonly IRepository<User> _userRepository;
+
+        public UserService(IRepository<User> userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
+        public void CreateUser(User user)
+        {
+            _userRepository.Add(user);
+        }
+
+        public User? GetUserById(int id)
+        {
+            return _userRepository.GetById(id);
+        }
+
+        public IEnumerable<User> GetAllUsers()
+        {
+            return _userRepository.GetAll();
+        }
+    }
+}
+```
+---
+
+### 📁 **EventManagement.Core**
+
+* `DTOs/EventResponseDto.cs`
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventManagement.Core.DTOs
+{
+    public  class EventResponseDto
+    {
+        public int Id { get; set; }
+        public required string Title { get; set; }
+        public required  string Description { get; set; }
+        public DateTime Date { get; set; }
+        public required string Location { get; set; }
+    }
+}
+```
+* `DTOs/RegistrationResponseDto.cs`
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventManagement.Core.DTOs
+{
+    public class  RegistrationResponseDto
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public int EventId { get; set; }
+        public DateTime RegistrationDate { get; set; }
+
+        public string UserName { get; set; } = string.Empty;
+        public string EventTitle { get; set; } = string.Empty;
+
+       
+    }
+}
+```
+* `DTOs/UserResponseDto.cs`
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventManagement.Core.DTOs
+{
+public  class UserResponseDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        public string Email { get; set; }
+    }
+}
+```
+* `Entities/Event.cs`
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventManagement.Core.Entities
+{
+   public  class Event
+    {
+        public int Id { get; set; }
+        public required string Title { get; set; }
+        public required string Description { get; set; }
+        public  DateTime Date { get; set; }
+        public required string Location { get; set; }
+
+        public ICollection<Registration> Registrations { get; set; }
+
+
+    }
+}
+```
+* `Entities/Registration.cs`
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventManagement.Core.Entities
+{
+   public class Registration
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public int EventId { get; set; }
+        public DateTime RegistrationDate { get; set; }
+
+        public User User { get; set; }
+        public Event Event { get; set; }
+    }
+}
+```
+* `Entities/User.cs`
+```
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventManagement.Core.Entities
+{
+  public  class User
+    {
+        public int Id { get; set; }
+        public required string Name { get; set; }
+       
+        public required string Email { get; set; }
+
+        public ICollection<Registration> Registrations { get; set; }
+    }
+}
+
+
+```
+* `Interfaces/IEventService.cs`
+```
+using EventManagement.Core.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventManagement.Core.Interfaces
+{
+public  interface IEventService
+    {
+        void CreateEvent(Event entity);
+        Event? GetEventById(int id);
+        IEnumerable<Event> GetAllEvents();
+    }
+}
+```
+* `Interfaces/IRegistrationService.cs`
+```
+using EventManagement.Core.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventManagement.Core.Interfaces
+{
+public  interface IRegistrationService
+    {
+        void RegisterUserForEvent(Registration registration);
+        IEnumerable<Registration> GetRegistrationsByEventId(int eventId);
+        IEnumerable<Registration> GetAllRegistrations();
+    }
+}
+```
+* `Interfaces/IRepository.cs`
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventManagement.Core.Interfaces
+{
+public interface IRepository<T> where T:class
+    {
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(int id);
+        T? GetById(int id);
+        IEnumerable<T> GetAll();
+
+    }
+}
+```
+* `Interfaces/IUserService.cs`
+```
+using EventManagement.Core.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EventManagement.Core.Interfaces
+{
+ public  interface IUserService
+    {
+        void CreateUser(User entity);
+        User? GetUserById(int id);
+        IEnumerable<User> GetAllUsers();
+    }
+}
+```
+---
+
+### 📁 **EventManagement.Infrastructure**
+
+* `Repositories/EventRepository.cs`
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using EventManagement.Core.Entities;
+using EventManagement.Core.Interfaces;
+
+namespace EventManagement.Infrastructure.Repositories
+{
+    public class EventRepository : IRepository<Event>
+    {
+        private readonly List<Event> _events = new();
+
+        public EventRepository()
+        {
+            _events = new List<Event>
+    {
+        new Event
+        {
+            Id = 1,
+            Title = "ASP.NET Core Workshop",
+            Description = "Backend development with .NET",
+            Date = new DateTime(2025, 08, 30, 10, 0, 0),
+            Location = "Chennai"
+        },
+        new Event
+        {
+            Id = 2,
+            Title = "Cloud DevOps Bootcamp",
+            Description = "CI/CD and DevOps on Azure",
+            Date = new DateTime(2025, 09, 05, 14, 0, 0),
+            Location = "Bangalore"
+        },
+        new Event
+        {
+            Id = 3,
+            Title = "Blazor WebAssembly Crash Course",
+            Description = "Full-stack C# with Blazor",
+            Date = new DateTime(2025, 09, 10, 9, 0, 0),
+            Location = "Hyderabad"
+        }
+    };
+        }
+
+
+        public void Add(Event entity)
+        {
+            _events.Add(entity);
+        }
+
+        public void Update(Event entity)
+        {
+            var existingEvent = _events.FirstOrDefault(e => e.Id == entity.Id);
+            if (existingEvent != null)
+            {
+                existingEvent.Title = entity.Title;
+                existingEvent.Description = entity.Description;
+                existingEvent.Date = entity.Date;
+                existingEvent.Location = entity.Location;
+            }
+        }
+
+        public void Delete(int id)
+        {
+            var existingEvent = _events.FirstOrDefault(e => e.Id == id);
+            if (existingEvent != null)
+            {
+                _events.Remove(existingEvent);
+            }
+        }
+
+        public Event? GetById(int id)
+        {
+            return _events.FirstOrDefault(e => e.Id == id);
+        }
+
+        public IEnumerable<Event> GetAll()
+        {
+            return _events;
+        }
+    }
+}
+```
+* `Repositories/RegistrationRepository.cs`
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using EventManagement.Core.Entities;
+using EventManagement.Core.Interfaces;
+
+namespace EventManagement.Infrastructure.Repositories
+{
+    public class RegistrationRepository : IRepository<Registration>
+    {
+        private readonly List<Registration> _registrations = new List<Registration>();
+
+        public RegistrationRepository()
+        {
+            _registrations = new List<Registration>
+    {
+        new Registration
+        {
+            Id = 1,
+            UserId = 1,  
+            EventId = 1,
+            RegistrationDate = DateTime.Now
+        },
+        new Registration
+        {
+            Id = 2,
+            UserId = 2, 
+            EventId = 1,
+            RegistrationDate = DateTime.Now
+        },
+        new Registration
+        {
+            Id = 3,
+            UserId = 3, 
+            EventId = 2,
+            RegistrationDate = DateTime.Now
+        },
+        new Registration
+        {
+            Id = 4,
+            UserId = 4,  
+            EventId = 3,
+            RegistrationDate = DateTime.Now
+        },
+        new Registration
+        {
+            Id = 5,
+            UserId = 1,  
+            EventId = 2,
+            RegistrationDate = DateTime.Now
+        }
+    };
+        }
+
+        public void Add(Registration entity)
+        {
+            _registrations.Add(entity);
+        }
+
+        public void Update(Registration entity)
+        {
+            var existing = _registrations.FirstOrDefault(r => r.Id == entity.Id);
+            if (existing != null)
+            {
+                existing.UserId = entity.UserId;
+                existing.EventId = entity.EventId;
+                existing.RegistrationDate = entity.RegistrationDate;
+            }
+        }
+
+        public void Delete(int id)
+        {
+            var existing = _registrations.FirstOrDefault(r => r.Id == id);
+            if (existing != null)
+            {
+                _registrations.Remove(existing);
+            }
+        }
+
+        public Registration? GetById(int id)
+        {
+            return _registrations.FirstOrDefault(r => r.Id == id);
+        }
+
+        public IEnumerable<Registration> GetAll()
+        {
+            return _registrations;
+        }
+
+        
+    }
+}
+```
+* `Repositories/UserRepository.cs`
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using EventManagement.Core.Entities;
+using EventManagement.Core.Interfaces;
+
+namespace EventManagement.Infrastructure.Repositories
+{
+   public class UserRepository:IRepository<User>
+    {
+        private readonly List<User>_users=new List<User>();
+        public UserRepository()
+        {
+            _users = new List<User>
+    {
+        new User { Id = 1, Name = "Haripriya", Email = "haripriya@example.com" },
+        new User { Id = 2, Name = "Ram", Email = "ram@example.com" },
+        new User { Id = 3, Name = "Shiva", Email = "shiva@example.com" },
+        new User { Id = 4, Name = "Kavi", Email = "kavi@example.com" }
+    };
+        }
+
+        public void Add(User entity)
+        {
+            _users.Add(entity);
+        }
+        public void Update(User entity) {
+            var existingUsers = _users.FirstOrDefault(b => b.Id == entity.Id);
+            if (existingUsers != null)
+            {
+                existingUsers.Id = entity.Id;
+                existingUsers.Name = entity.Name;
+                existingUsers.Email = entity.Email;
+            }
+              
+        }
+       public  void Delete(int id) {
+            var user = GetById(id);
+            if (user!= null)
+            {
+                _users.Remove(user);
+            }
+
+        }
+      public   User? GetById(int id)
+        {
+            return _users.FirstOrDefault(b => b.Id == id);
+        }
+      public   IEnumerable<User> GetAll()
+        {
+            return _users;
+        }
+    }
+}
+```
+---
+
+### 📁 **EventManagementAPI**
+```
+
+* `Controllers/EventController.cs`
+using EventManagement.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using EventManagement.Core.DTOs;
+
+[ApiController]
+[Route("api/[controller]")]
+public class EventsController : ControllerBase
+{
+    private readonly IEventService _eventService;
+
+    public EventsController(IEventService eventService)
+    {
+        _eventService = eventService;
+    }
+
+    [HttpGet]
+    public ActionResult<IEnumerable<EventResponseDto>> GetAll()
+    {
+        var events = _eventService.GetAllEvents()
+                      .Select(e => new EventResponseDto
+                      {
+                          Id = e.Id,
+                          Title = e.Title,
+                          Description = e.Description,
+                          Date = e.Date,
+                          Location = e.Location
+                      });
+        if (events == null) return NotFound();
+
+        return Ok(events);
+    }
+
+    [HttpGet("{id}")]
+    public ActionResult<EventResponseDto> GetById(int id)
+    {
+        var evt = _eventService.GetEventById(id);
+        if (evt == null) return NotFound();
+
+        return Ok(new EventResponseDto
+        {
+            Id = evt.Id,
+            Title = evt.Title,
+            Description = evt.Description,
+            Date = evt.Date,
+            Location = evt.Location
+        });
+    }
+}
+```
+* `Controllers/RegistrationController.cs`
+```
+using EventManagement.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using EventManagement.Core.DTOs;
+[ApiController]
+[Route("api/[controller]")]
+public class RegistrationsController : ControllerBase
+{
+    private readonly IRegistrationService _registrationService;
+    private readonly IUserService _userService;
+    private readonly IEventService _eventService;
+
+    public RegistrationsController(IRegistrationService registrationService,
+                                   IUserService userService,
+                                   IEventService eventService)
+    {
+        _registrationService = registrationService;
+        _userService = userService;
+        _eventService = eventService;
+    }
+
+    [HttpGet("event/{eventId}")]
+    public ActionResult<IEnumerable<RegistrationResponseDto>> GetByEventId(int eventId)
+    {
+        var registrations = _registrationService.GetRegistrationsByEventId(eventId);
+        var result = new List<RegistrationResponseDto>();
+
+        foreach (var reg in registrations)
+        {
+            var user = _userService.GetUserById(reg.UserId);
+            var evt = _eventService.GetEventById(reg.EventId);
+
+            result.Add(new RegistrationResponseDto
+            {
+                Id = reg.Id,
+                UserId = reg.UserId,
+                UserName = user?.Name ?? "Unknown",
+                EventId = reg.EventId,
+                EventTitle = evt?.Title ?? "Unknown",
+                RegistrationDate = reg.RegistrationDate
+            });
+        }
+
+        return Ok(result);
+    }
+}
+```
+* `Controllers/UserController.cs`
+```
+using EventManagement.Core.DTOs;
+using EventManagement.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController : ControllerBase
+{
+    private readonly IUserService _userService;
+
+    public UsersController(IUserService userService)
+    {
+        _userService = userService;
+    }
+
+    [HttpGet]
+    public ActionResult<IEnumerable<UserResponseDto>> GetAll()
+    {
+        var users = _userService.GetAllUsers()
+                     .Select(u => new UserResponseDto
+                     {
+                         Id = u.Id,
+                         Name = u.Name,
+                         Email = u.Email
+                     });
+        return Ok(users);
+    }
+
+    [HttpGet("{id}")]
+    public ActionResult<UserResponseDto> GetById(int id)
+    {
+        var user = _userService.GetUserById(id);
+        if (user == null) return NotFound();
+
+        return Ok(new UserResponseDto
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email
+        });
+    }
+}
+```
+Program.cs
+```
+``
+using EventManagement.Application.Services;
+using EventManagement.Core.Entities;
+using EventManagement.Core.Interfaces;
+using EventManagement.Infrastructure.Repositories;
+using EventManagement.Services;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Dependency Injection - Repositories
+builder.Services.AddScoped<IRepository<Event>, EventRepository>();
+builder.Services.AddScoped<IRepository<User>, UserRepository>();
+builder.Services.AddScoped<IRepository<Registration>, RegistrationRepository>();
+
+// Dependency Injection - Services
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+
+var app = builder.Build();
+
+// Configure middleware
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();
+``
+```
+## 18 OUTPUT
+
+---
+
+## 🔹 **1. Events**
+
+### ✅ GET `/api/Events`
+
+**📥 Request**
+No parameters
+
+**📤 Response: `200 OK`**
+
+```json
+[
+  {
+    "id": 1,
+    "title": "ASP.NET Core Workshop",
+    "description": "Backend development with .NET",
+    "date": "2025-08-30T10:00:00",
+    "location": "Chennai"
+  },
+  {
+    "id": 2,
+    "title": "Cloud DevOps Bootcamp",
+    "description": "CI/CD and DevOps on Azure",
+    "date": "2025-09-05T14:00:00",
+    "location": "Bangalore"
+  },
+  {
+    "id": 3,
+    "title": "Blazor WebAssembly Crash Course",
+    "description": "Full-stack C# with Blazor",
+    "date": "2025-09-10T09:00:00",
+    "location": "Hyderabad"
+  }
+]
+```
+
+---
+
+### ✅ GET `/api/Events/{id}` (Example: `1`)
+
+**📥 Request**
+
+```http
+GET /api/Events/1
+```
+
+**📤 Response: `200 OK`**
+
+```json
+{
+  "id": 1,
+  "title": "ASP.NET Core Workshop",
+  "description": "Backend development with .NET",
+  "date": "2025-08-30T10:00:00",
+  "location": "Chennai"
+}
+```
+
+---
+
+## 🔹 **2. Users**
+
+### ✅ GET `/api/Users`
+
+**📥 Request**
+No parameters
+
+**📤 Response: `200 OK`**
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Haripriya",
+    "email": "haripriya@example.com"
+  },
+  {
+    "id": 2,
+    "name": "Ram",
+    "email": "ram@example.com"
+  },
+  {
+    "id": 3,
+    "name": "Shiva",
+    "email": "shiva@example.com"
+  },
+  {
+    "id": 4,
+    "name": "Kavi",
+    "email": "kavi@example.com"
+  }
+]
+```
+
+---
+
+### ✅ GET `/api/Users/{id}` (Example: `1`)
+
+**📥 Request**
+
+```http
+GET /api/Users/1
+```
+
+**📤 Response: `200 OK`**
+
+```json
+{
+  "id": 1,
+  "name": "Haripriya",
+  "email": "haripriya@example.com"
+}
+```
+
+---
+
+## 🔹 **3. Registrations**
+
+### ✅ GET `/api/Registrations/event/{eventId}` (Example: `2`)
+
+**📥 Request**
+
+```http
+GET /api/Registrations/event/2
+```
+
+**📤 Response: `200 OK`**
+
+```json
+[
+  {
+    "id": 3,
+    "userId": 3,
+    "eventId": 2,
+    "registrationDate": "2025-08-08T18:23:51.0892989+05:30",
+    "userName": "Shiva",
+    "eventTitle": "Cloud DevOps Bootcamp"
+  },
+  {
+    "id": 5,
+    "userId": 1,
+    "eventId": 2,
+    "registrationDate": "2025-08-08T18:23:51.0893009+05:30",
+    "userName": "Haripriya",
+    "eventTitle": "Cloud DevOps Bootcamp"
+  }
+]
+```
+
+---
+Author: Hari Ram  L
+Readme.md
+
+# 🎉 Event Management System
+
+
+A modular, layered ASP.NET Core Web API for managing technical events, users, and registrations. Built following **Clean Architecture** principles with a focus on simplicity, scalability, and maintainability.
+
+
+## 📚 Introduction
+
+The **Event Management System** is a backend web API designed to:
+
+- 🎫 List and manage events
+- 👥 List users
+- 🔗 Link users to events through registrations
+
+> Perfect for learning clean architecture in ASP.NET Core, or as a foundation for a real-world event system.
+
+---
+
+## 🚀 Features
+
+- ✅ List technical events
+- ✅ Get user details
+- ✅ Register users for events
+- ✅ View event participants
+- ✅ In-memory repository (lightweight)
+- ✅ Auto-generated Swagger documentation
+
+
+---
+
+## 🏗️ Architecture
+
+
+The Event Management System follows **Onion Architecture**, focusing on dependency inversion and separation of concerns.
+
+```text
+Infrastructure (Data access, Repositories)
+          ↑
+Application (Business logic, Services)
+          ↑
+Domain (Entities, Interfaces, Core Models)
+          ↑
+Presentation (API Controllers, UI)
+
+```
+
+
+---
+### Architectural Layers
+
+### 1. Presentation Layer (`EventManagementAPI`)
+
+* **Purpose:** Handle HTTP requests and responses.
+* **Components:** API Controllers such as `EventController`, `UserController`, and `RegistrationController`.
+* **Responsibilities:**
+
+  * Expose RESTful API endpoints.
+  * Basic input validation.
+  * Return DTOs to clients.
+  * Delegate business logic to the Application layer.
+
+### 2. Application Layer (`EventManagement.Application`)
+
+* **Purpose:** Contains business logic and orchestrates application workflows.
+* **Components:** Services like `EventService`, `UserService`, and `RegistrationService`.
+* **Responsibilities:**
+
+  * Implement business rules.
+  * Coordinate between Core entities and Infrastructure repositories.
+  * Map domain entities to DTOs and vice versa.
+
+### 3. Core Layer (`EventManagement.Core`)
+
+* **Purpose:** Define the fundamental domain models and contracts.
+* **Components:**
+
+  * **Entities:** `Event`, `User`, `Registration`.
+  * **DTOs:** Data Transfer Objects for API communication.
+  * **Interfaces:** Service and repository abstractions (`IEventService`, `IRepository`, etc.).
+* **Responsibilities:**
+
+  * Maintain domain logic.
+  * Provide abstractions for other layers.
+
+### 4. Infrastructure Layer (`EventManagement.Infrastructure`)
+
+* **Purpose:** Data access and external service implementations.
+* **Components:** Repository classes like `EventRepository`, `UserRepository`, `RegistrationRepository`.
+* **Responsibilities:**
+
+  * Data persistence (currently in-memory, extendable to databases).
+  * Abstract data source details from upper layers.
+
+---
+
+### Summary Table
+
+| Layer          | Responsibility                  | Examples                           |
+| -------------- | ------------------------------- | ---------------------------------- |
+| Presentation   | API endpoints and HTTP handling | Controllers (`EventController.cs`) |
+| Application    | Business logic and workflows    | Services (`EventService.cs`)       |
+| Core           | Domain models and interfaces    | Entities, DTOs, Interfaces         |
+| Infrastructure | Data access and persistence     | Repositories                       |
+
+> Each layer has a single responsibility and communicates with others through well-defined abstractions, ensuring loose coupling and high cohesion.
+
+
+
+
+---
+
+
+## 🗂️ Folder Structure (Best Practices)
+```
+EventManagement/
+├── EventManagement.Application/
+│   └── Services/
+│       ├── EventService.cs
+│       ├── RegistrationService.cs
+│       └── UserService.cs
+
+├── EventManagement.Core/
+│   ├── DTOs/
+│   │   ├── EventResponseDto.cs
+│   │   ├── RegistrationResponseDto.cs
+│   │   └── UserResponseDto.cs
+│   ├── Entities/
+│   │   ├── Event.cs
+│   │   ├── Registration.cs
+│   │   └── User.cs
+│   └── Interfaces/
+│       ├── IEventService.cs
+│       ├── IRegistrationService.cs
+│       ├── IRepository.cs
+│       └── IUserService.cs
+
+├── EventManagement.Infrastructure/
+│   └── Repositories/
+│       ├── EventRepository.cs
+│       ├── RegistrationRepository.cs
+│       └── UserRepository.cs
+
+├── EventManagementAPI/
+│   ├── Controllers/
+│   │   ├── EventController.cs
+│   │   ├── RegistrationController.cs
+│   │   └── UserController.cs
+│   └── Program.cs
+```
+
+---
+
+## 🛠️ Technologies Used
+
+| 🔧 Technology         | ⚙️ Purpose                |
+| --------------------- | ------------------------- |
+| ASP.NET Core Web API  | Backend framework         |
+| C#                    | Main programming language |
+| LINQ                  | In-memory querying        |
+| Swagger (Swashbuckle) | API Documentation         |
+| DTOs                  | Clean API response models |
+| Dependency Injection  | Layered decoupling        |
+
+---
+## 🛠️ Steps to Create Solution
+
+
+# 1️⃣ Create root folder and navigate
+```
+mkdir EventManagement
+cd EventManagement
+```
+# 2️⃣ Create the solution file
+```
+dotnet new sln -n EventManagement
+
+```
+# 3️⃣ Create class library projects
+```
+dotnet new classlib -n EventManagement.Core
+dotnet new classlib -n EventManagement.Application
+dotnet new classlib -n EventManagement.Infrastructure
+```
+# 4️⃣ Create the Web API project
+```
+dotnet new webapi -n EventManagementAPI
+```
+
+# 5️⃣ Add project references
+```
+dotnet add EventManagement.Application/EventManagement.Application.csproj reference EventManagement.Core/EventManagement.Core.csproj
+dotnet add EventManagement.Infrastructure/EventManagement.Infrastructure.csproj reference EventManagement.Core/EventManagement.Core.csproj
+dotnet add EventManagementAPI/EventManagementAPI.csproj reference EventManagement.Application/EventManagement.Application.csproj
+dotnet add EventManagementAPI/EventManagementAPI.csproj reference EventManagement.Infrastructure/EventManagement.Infrastructure.csproj
+```
+# 6️⃣ Add all projects to the solution
+```
+dotnet sln EventManagement.sln add EventManagement.Core/EventManagement.Core.csproj
+dotnet sln EventManagement.sln add EventManagement.Application/EventManagement.Application.csproj
+dotnet sln EventManagement.sln add EventManagement.Infrastructure/EventManagement.Infrastructure.csproj
+dotnet sln EventManagement.sln add EventManagementAPI/EventManagementAPI.csproj
+```
+
+# 6️⃣ Add all projects to the solution
+```
+dotnet sln EventManagement.sln add EventManagement.Core/EventManagement.Core.csproj
+dotnet sln EventManagement.sln add EventManagement.Application/EventManagement.Application.csproj
+dotnet sln EventManagement.sln add EventManagement.Infrastructure/EventManagement.Infrastructure.csproj
+dotnet sln EventManagement.sln add EventManagementAPI/EventManagementAPI.csproj
+```
+
+## 🚦 Getting Started
+
+### 📦 Prerequisites
+
+* [.NET 6 SDK or newer](https://dotnet.microsoft.com/download)
+* Visual Studio / VS Code
+
+### ▶️ Run the App
+
+```bash
+git clone https://github.com/your-username/EventManagement.git
+cd EventManagement
+dotnet run --project EventManagementAPI
+```
+
+### 🌐 View Swagger
+
+Go to:
+
+```
+https://localhost:<port>/swagger
+```
+
+
+---
+
+## 🌐 API Endpoints
+
+### 📅 Events
+
+| Method | Endpoint           | Description     |
+| ------ | ------------------ | --------------- |
+| GET    | `/api/events`      | Get all events  |
+| GET    | `/api/events/{id}` | Get event by ID |
+
+### 👥 Users
+
+| Method | Endpoint          | Description    |
+| ------ | ----------------- | -------------- |
+| GET    | `/api/users`      | Get all users  |
+| GET    | `/api/users/{id}` | Get user by ID |
+
+### 🔗 Registrations
+
+| Method | Endpoint                             | Description                   |
+| ------ | ------------------------------------ | ----------------------------- |
+| GET    | `/api/registrations/event/{eventId}` | Get users registered to event |
+
+---
+
+## 🧩 Data Models
+
+### 🎫 Event
+
+```csharp
+public class Event {
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public DateTime Date { get; set; }
+    public string Location { get; set; }
+}
+```
+
+### 👤 User
+
+```csharp
+public class User {
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+}
+```
+
+### 📝 Registration
+
+```csharp
+public class Registration {
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public int EventId { get; set; }
+    public DateTime RegistrationDate { get; set; }
+}
+```
+
+---
+
+## 📦 Sample Data
+
+| Event                           | Date       | Location  |
+| ------------------------------- | ---------- | --------- |
+| ASP.NET Core Workshop           | 2025-08-30 | Chennai   |
+| Cloud DevOps Bootcamp           | 2025-09-05 | Bangalore |
+| Blazor WebAssembly Crash Course | 2025-09-10 | Hyderabad |
+
+| Users     | Email                                                 |
+| --------- | ----------------------------------------------------- |
+| Haripriya | [haripriya@example.com](mailto:haripriya@example.com) |
+| Ram       | [ram@example.com](mailto:ram@example.com)             |
+| Shiva     | [shiva@example.com](mailto:shiva@example.com)         |
+| Kavi      | [kavi@example.com](mailto:kavi@example.com)           |
+
+---
+
+
+## OUTPUT
+
+
+
+## 🔹 **1. Events**
+
+### ✅ GET `/api/Events`
+
+**📥 Request**
+No parameters
+
+**📤 Response: `200 OK`**
+
+```json
+[
+  {
+    "id": 1,
+    "title": "ASP.NET Core Workshop",
+    "description": "Backend development with .NET",
+    "date": "2025-08-30T10:00:00",
+    "location": "Chennai"
+  },
+  {
+    "id": 2,
+    "title": "Cloud DevOps Bootcamp",
+    "description": "CI/CD and DevOps on Azure",
+    "date": "2025-09-05T14:00:00",
+    "location": "Bangalore"
+  },
+  {
+    "id": 3,
+    "title": "Blazor WebAssembly Crash Course",
+    "description": "Full-stack C# with Blazor",
+    "date": "2025-09-10T09:00:00",
+    "location": "Hyderabad"
+  }
+]
+```
+
+---
+
+### ✅ GET `/api/Events/{id}` (Example: `1`)
+
+**📥 Request**
+
+```http
+GET /api/Events/1
+```
+
+**📤 Response: `200 OK`**
+
+```json
+{
+  "id": 1,
+  "title": "ASP.NET Core Workshop",
+  "description": "Backend development with .NET",
+  "date": "2025-08-30T10:00:00",
+  "location": "Chennai"
+}
+```
+
+---
+
+## 🔹 **2. Users**
+
+### ✅ GET `/api/Users`
+
+**📥 Request**
+No parameters
+
+**📤 Response: `200 OK`**
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Haripriya",
+    "email": "haripriya@example.com"
+  },
+  {
+    "id": 2,
+    "name": "Ram",
+    "email": "ram@example.com"
+  },
+  {
+    "id": 3,
+    "name": "Shiva",
+    "email": "shiva@example.com"
+  },
+  {
+    "id": 4,
+    "name": "Kavi",
+    "email": "kavi@example.com"
+  }
+]
+```
+
+---
+
+### ✅ GET `/api/Users/{id}` (Example: `1`)
+
+**📥 Request**
+
+```http
+GET /api/Users/1
+```
+
+**📤 Response: `200 OK`**
+
+```json
+{
+  "id": 1,
+  "name": "Haripriya",
+  "email": "haripriya@example.com"
+}
+```
+
+---
+
+## 🔹 **3. Registrations**
+
+### ✅ GET `/api/Registrations/event/{eventId}` (Example: `2`)
+
+**📥 Request**
+
+```http
+GET /api/Registrations/event/2
+```
+
+**📤 Response: `200 OK`**
+
+```json
+[
+  {
+    "id": 3,
+    "userId": 3,
+    "eventId": 2,
+    "registrationDate": "2025-08-08T18:23:51.0892989+05:30",
+    "userName": "Shiva",
+    "eventTitle": "Cloud DevOps Bootcamp"
+  },
+  {
+    "id": 5,
+    "userId": 1,
+    "eventId": 2,
+    "registrationDate": "2025-08-08T18:23:51.0893009+05:30",
+    "userName": "Haripriya",
+    "eventTitle": "Cloud DevOps Bootcamp"
+  }
+]
+```
+
+---
+Author: Hari Ram  L
+
+
+---
+## Screenshots
+
+
+## 📈 Future Improvements
+
+* [ ] Add POST / PUT / DELETE endpoints
+* [ ] EF Core with real database (SQL Server)
+* [ ] JWT Authentication
+* [ ] Role-based access
+* [ ] Pagination & Filtering
+* [ ] CI/CD with GitHub Actions
+* [ ] Unit tests with xUnit
+
+---
+
+## 🤝 Contributing
+
+![Contribute](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes
+4. Push and open a PR
+
+Please follow the project's existing coding standards.
+
+---
+
+## 📄 License
+
+Licensed under the [MIT License](LICENSE).
+Feel free to use, modify, and distribute.
+
+---
+
+
+
+ Created with ❤️ by **Hari Ram L**
+
+
