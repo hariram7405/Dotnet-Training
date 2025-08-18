@@ -1,0 +1,39 @@
+### Create Customer
+POST https://localhost:7xxx/api/customer
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@email.com",
+  "phone": "+1234567890"
+}
+
+### Get All Customers
+GET https://localhost:7xxx/api/customer
+
+### Create Account
+POST https://localhost:7xxx/api/account
+Content-Type: application/json
+
+{
+  "customerId": "{{customerId}}",
+  "initialBalance": 1000.00,
+  "accountType": "Savings"
+}
+
+### Get All Accounts
+GET https://localhost:7xxx/api/account
+
+### Transfer Money
+POST https://localhost:7xxx/api/transaction/transfer
+Content-Type: application/json
+
+{
+  "fromAccountNumber": "{{fromAccountNumber}}",
+  "toAccountNumber": "{{toAccountNumber}}",
+  "amount": 250.00,
+  "description": "Payment for services"
+}
+
+### Get Transaction History
+GET https://localhost:7xxx/api/transaction/history/{{accountId}}?page=1&pageSize=10

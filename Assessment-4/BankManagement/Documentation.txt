@@ -1,0 +1,3165 @@
+# BankPro - Complete Bank Management System Documentation
+
+## 1. Project Overview
+
+**BankPro** is a comprehensive bank management system built using .NET 8 Web API with Clean Architecture principles. The system provides in-memory data storage for managing customers, accounts, and transactions in a banking environment.
+
+### Key Features
+- Customer management (CRUD operations)
+- Account management with balance tracking
+- Money transfer between accounts
+- Transaction history with pagination
+- RESTful API design
+- In-memory data persistence
+- Comprehensive unit testing
+
+##
+
+## 2. Solution Architecture
+
+The project follows **Clean Architecture** principles with clear separation of concerns:
+
+```
+┌─────────────────────────────────────────┐
+│              Presentation               │
+│         (BankManagement.API)            │
+│    Controllers, Program.cs, DI Config  │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│             Application                 │
+│       (BankManagement.Application)      │
+│     Services, AutoMapper, Business      │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│            Infrastructure               │
+│     (BankManagement.Infrastructure)     │
+│    Repositories, Data Access Layer     │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│               Domain                    │
+│         (BankManagement.Core)           │
+│   Entities, DTOs, Interfaces, Rules    │
+└─────────────────────────────────────────┘
+```
+
+### Architecture Benefits
+- **Testability**: Easy to unit test with dependency injection
+- **Maintainability**: Clear separation of concerns
+- **Scalability**: Easy to extend and modify
+- **Independence**: Core business logic independent of external concerns
+
+## 3. Folder & Layer Structure
+
+```
+BankManagement/
+├── BankManagement.sln                    # Solution file
+├── README.md                             # Project overview
+├── BuggyCodeFix.cs                       # Bug fix documentation
+├── COMPLETE_PROJECT_DOCUMENTATION.md     # This documentation
+│
+├── BankManagement.Core/                  # 🎯 DOMAIN LAYER
+│   ├── Entities/                         # Domain entities
+│   │   ├── Customer.cs                   # Customer entity
+│   │   ├── Account.cs                    # Account entity
+│   │   └── Transaction.cs                # Transaction entity
+│   ├── DTOs/                            # Data Transfer Objects
+│   │   ├── CustomerRequestDTO.cs         # Customer input DTO
+│   │   ├── CustomerResponseDTO.cs        # Customer output DTO
+│   │   ├── AccountRequestDTO.cs          # Account input DTO
+│   │   ├── AccountResponseDTO.cs         # Account output DTO
+│   │   ├── TransactionRequestDTO.cs      # Transaction input DTO
+│   │   └── TransactionResponseDTO.cs     # Transaction output DTO
+│   ├── Interfaces/                       # Contracts & abstractions
+│   │   ├── IRepository.cs                # Generic repository interface
+│   │   ├── ICustomerRepository.cs        # Customer repository contract
+│   │   ├── IAccountRepository.cs         # Account repository contract
+│   │   ├── ITransactionRepository.cs     # Transaction repository contract
+│   │   ├── ICustomerService.cs           # Customer service contract
+│   │   ├── IAccountService.cs            # Account service contract
+│   │   └── ITransactionService.cs        # Transaction service contract
+│   └── BankManagement.Core.csproj        # Project configuration
+│
+├── BankManagement.Application/           # 🧠 APPLICATION LAYER
+│   ├── Services/                         # Business logic services
+│   │   ├── CustomerService.cs            # Customer business operations
+│   │   ├── AccountService.cs             # Account business operations
+│   │   └── TransactionService.cs         # Transaction business operations
+│   ├── Mapping/                          # Object mapping configuration
+│   │   └── MappingProfile.cs             # AutoMapper profile
+│   └── BankManagement.Application.csproj # Project configuration
+│
+├── BankManagement.Infrastructure/        # 🏗️ INFRASTRUCTURE LAYER
+│   ├── Repositories/                     # Data access implementations
+│   │   ├── CustomerRepository.cs         # Customer data operations
+│   │   ├── AccountRepository.cs          # Account data operations
+│   │   └── TransactionRepository.cs      # Transaction data operations
+│   └── BankManagement.Infrastructure.csproj # Project configuration
+│
+├── BankManagement.API/                   # 🌐 PRESENTATION LAYER
+│   ├── Controllers/                      # API endpoints
+│   │   ├── CustomerController.cs         # Customer API endpoints
+│   │   ├── AccountController.cs          # Account API endpoints
+│   │   └── TransactionController.cs      # Transaction API endpoints
+│   ├── Properties/
+│   │   └── launchSettings.json           # Launch configuration
+│   ├── Program.cs                        # Application startup & DI
+│   ├── appsettings.json                  # Application settings
+│   ├── appsettings.Development.json      # Development settings
+│   ├── BankManagement.API.http           # HTTP test requests
+│   └── BankManagement.API.csproj         # Project configuration
+│
+└── BankManagement.Tests/                 # 🧪 TEST LAYER
+    ├── Services/                         # Service unit tests
+    │   └── TransactionServiceTests.cs    # Transaction service tests
+    └── BankManagement.Tests.csproj       # Test project configuration
+```
+
+## 4. Technology Stack
+
+### Core Technologies
+- **.NET 8.0** - Latest .NET framework
+- **ASP.NET Core Web API** - RESTful API framework
+- **C# 12** - Programming language
+
+### Libraries & Packages
+| Package | Version | Purpose | Project |
+|---------|---------|---------|---------|
+| **AutoMapper** | 12.0.1 | Object-to-object mapping | Application |
+| **AutoMapper.Extensions.Microsoft.DependencyInjection** | 12.0.1 | DI integration | API |
+| **Swashbuckle.AspNetCore** | 6.6.2 | Swagger/OpenAPI documentation | API |
+| **xUnit** | 2.6.1 | Unit testing framework | Tests |
+| **Moq** | 4.20.69 | Mocking framework | Tests |
+| **Microsoft.NET.Test.Sdk** | 17.8.0 | Test SDK | Tests |
+
+### Development Tools
+- **Visual Studio 2022** / **VS Code**
+- **Postman** - API testing
+- **Swagger UI** - API documentation
+- **Git** - Version control
+
+## 5. Setup & Installation Guide
+
+### Prerequisites
+- .NET 8.0 SDK or later
+- Visual Studio 2022 / VS Code
+- Git (optional)
+
+### Installation Steps
+
+1. **Clone/Download the Project**
+   ```bash
+   git clone <repository-url>
+   cd BankManagement
+   ```
+
+2. **Restore NuGet Packages**
+   ```bash
+   dotnet restore
+   ```
+
+3. **Build the Solution**
+   ```bash
+   dotnet build
+   ```
+
+4. **Verify Installation**
+   ```bash
+   dotnet test  # Run unit tests
+   ```
+
+### Project Dependencies
+The solution automatically handles project references:
+- API → Application, Core, Infrastructure
+- Application → Core
+- Infrastructure → Core
+- Tests → Application, Core
+
+## 6. Running the Application
+
+### Start the API Server
+```bash
+# Navigate to API project
+cd BankManagement.API
+
+# Run the application
+dotnet run
+
+# Or with watch mode (auto-restart on changes)
+dotnet watch run
+```
+
+### Access Points
+- **API Base URL**: `https://localhost:7xxx` (check console for exact port)
+- **Swagger UI**: `https://localhost:7xxx/swagger`
+- **Health Check**: `https://localhost:7xxx/api/customer` (GET)
+
+### Environment Configuration
+- **Development**: Uses `appsettings.Development.json`
+- **Production**: Uses `appsettings.json`
+
+## 7. Project Workflow
+
+### Development Workflow
+1. **Domain First**: Define entities and interfaces in Core
+2. **Infrastructure**: Implement repositories
+3. **Application**: Implement business services
+4. **Presentation**: Create API controllers
+5. **Testing**: Write unit tests
+
+### Request Flow
+```
+HTTP Request → Controller → Service → Repository → In-Memory Data
+                    ↓
+HTTP Response ← DTO ← AutoMapper ← Entity ← Repository Response
+```
+
+### Data Flow Example (Transfer Money)
+1. **Controller** receives TransactionRequestDTO
+2. **Service** validates business rules
+3. **Repository** updates account balances
+4. **AutoMapper** converts to TransactionResponseDTO
+5. **Controller** returns HTTP response
+
+## 8. Dependency Injection & Configuration
+
+### Program.cs Configuration
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Add AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+// Register repositories as singletons (in-memory persistence)
+builder.Services.AddSingleton<ICustomerRepository, CustomerRepository>();
+builder.Services.AddSingleton<IAccountRepository, AccountRepository>();
+builder.Services.AddSingleton<ITransactionRepository, TransactionRepository>();
+
+// Register services as scoped
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+
+var app = builder.Build();
+
+// Configure pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
+```
+
+### Service Lifetimes
+- **Singleton**: Repositories (for in-memory data persistence)
+- **Scoped**: Services (per HTTP request)
+- **Transient**: Not used in this project
+
+## 9. Entity & DTO Overview
+
+### Core Entities
+
+#### Customer Entity
+```csharp
+public class Customer
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Name { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public List<Account> Accounts { get; set; } = new();
+}
+```
+
+#### Account Entity
+```csharp
+public class Account
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string AccountNumber { get; set; } = string.Empty;
+    public string CustomerId { get; set; } = string.Empty;
+    public decimal Balance { get; set; }
+    public string AccountType { get; set; } = "Savings";
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public bool IsActive { get; set; } = true;
+}
+```
+
+#### Transaction Entity
+```csharp
+public class Transaction
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string FromAccountId { get; set; } = string.Empty;
+    public string ToAccountId { get; set; } = string.Empty;
+    public decimal Amount { get; set; }
+    public string TransactionType { get; set; } = string.Empty;
+    public DateTime TransactionDate { get; set; } = DateTime.UtcNow;
+    public string Description { get; set; } = string.Empty;
+    public string Status { get; set; } = "Completed";
+}
+```
+
+### DTO Patterns
+- **Request DTOs**: Input validation and data binding
+- **Response DTOs**: Output formatting and data projection
+- **Separation**: Clear distinction between internal entities and external contracts
+
+## 10. AutoMapper Configuration
+
+### MappingProfile.cs
+```csharp
+public class MappingProfile : Profile
+{
+    public MappingProfile()
+    {
+        // Customer mappings
+        CreateMap<Customer, CustomerResponseDTO>();
+        CreateMap<CustomerRequestDTO, Customer>();
+
+        // Account mappings
+        CreateMap<Account, AccountResponseDTO>();
+        CreateMap<AccountRequestDTO, Account>()
+            .ForMember(dest => dest.Balance, opt => opt.MapFrom(src => src.InitialBalance));
+
+        // Transaction mappings
+        CreateMap<Transaction, TransactionResponseDTO>();
+        CreateMap<TransactionRequestDTO, Transaction>();
+    }
+}
+```
+
+### Mapping Benefits
+- **Automatic**: Reduces boilerplate code
+- **Type Safety**: Compile-time mapping validation
+- **Performance**: Optimized mapping execution
+- **Maintainability**: Centralized mapping configuration
+
+## 11. Services and Business Logic
+
+### Service Layer Responsibilities
+- **Business Logic**: Core business rules and validations
+- **Orchestration**: Coordinate between repositories
+- **Transaction Management**: Ensure data consistency
+- **DTO Conversion**: Entity-DTO transformations
+
+### CustomerService Example
+```csharp
+public class CustomerService : ICustomerService
+{
+    private readonly ICustomerRepository _customerRepository;
+    private readonly IMapper _mapper;
+
+    public CustomerService(ICustomerRepository customerRepository, IMapper mapper)
+    {
+        _customerRepository = customerRepository;
+        _mapper = mapper;
+    }
+
+    public async Task<CustomerResponseDTO> CreateCustomerAsync(CustomerRequestDTO request)
+    {
+        // Business validation
+        var existingCustomer = await _customerRepository.GetByEmailAsync(request.Email);
+        if (existingCustomer != null)
+            throw new InvalidOperationException("Customer with this email already exists");
+
+        // Create and save
+        var customer = _mapper.Map<Customer>(request);
+        var createdCustomer = await _customerRepository.AddAsync(customer);
+        
+        // Return DTO
+        return _mapper.Map<CustomerResponseDTO>(createdCustomer);
+    }
+    
+    // Other methods...
+}
+```
+
+### TransactionService - Money Transfer Logic
+```csharp
+public async Task<TransactionResponseDTO> TransferMoneyAsync(TransactionRequestDTO request)
+{
+    // Get accounts
+    var senderAccount = await _accountRepository.GetByAccountNumberAsync(request.FromAccountNumber);
+    var receiverAccount = await _accountRepository.GetByAccountNumberAsync(request.ToAccountNumber);
+
+    // Validate accounts exist
+    if (senderAccount == null) throw new ArgumentException("Sender account not found");
+    if (receiverAccount == null) throw new ArgumentException("Receiver account not found");
+
+    // Validate business rules
+    if (!senderAccount.IsActive) throw new InvalidOperationException("Sender account is inactive");
+    if (!receiverAccount.IsActive) throw new InvalidOperationException("Receiver account is inactive");
+    if (senderAccount.Balance < request.Amount) throw new InvalidOperationException("Insufficient funds");
+    if (request.Amount <= 0) throw new ArgumentException("Amount must be positive");
+
+    // Perform transfer
+    senderAccount.Balance -= request.Amount;
+    receiverAccount.Balance += request.Amount;
+
+    // Update accounts
+    await _accountRepository.UpdateAsync(senderAccount);
+    await _accountRepository.UpdateAsync(receiverAccount);
+
+    // Create transaction record
+    var transaction = new Transaction
+    {
+        FromAccountId = senderAccount.Id,
+        ToAccountId = receiverAccount.Id,
+        Amount = request.Amount,
+        TransactionType = "Transfer",
+        Description = request.Description,
+        Status = "Completed"
+    };
+
+    var createdTransaction = await _transactionRepository.AddAsync(transaction);
+    return _mapper.Map<TransactionResponseDTO>(createdTransaction);
+}
+```
+
+## 12. Repository Pattern Implementation
+
+### Generic Repository Interface
+```csharp
+public interface IRepository<T> where T : class
+{
+    Task<IEnumerable<T>> GetAllAsync();
+    Task<T?> GetByIdAsync(string id);
+    Task<T> AddAsync(T entity);
+    Task<T> UpdateAsync(T entity);
+    Task<bool> DeleteAsync(string id);
+}
+```
+
+### Specific Repository Interfaces
+```csharp
+public interface ICustomerRepository : IRepository<Customer>
+{
+    Task<Customer?> GetByEmailAsync(string email);
+}
+
+public interface IAccountRepository : IRepository<Account>
+{
+    Task<Account?> GetByAccountNumberAsync(string accountNumber);
+    Task<IEnumerable<Account>> GetByCustomerIdAsync(string customerId);
+}
+
+public interface ITransactionRepository : IRepository<Transaction>
+{
+    Task<IEnumerable<Transaction>> GetByAccountIdAsync(string accountId, int page = 1, int pageSize = 10);
+}
+```
+
+### In-Memory Repository Implementation
+```csharp
+public class CustomerRepository : ICustomerRepository
+{
+    private readonly List<Customer> _customers = new();
+
+    public async Task<IEnumerable<Customer>> GetAllAsync()
+    {
+        return await Task.FromResult(_customers.AsEnumerable());
+    }
+
+    public async Task<Customer?> GetByIdAsync(string id)
+    {
+        return await Task.FromResult(_customers.FirstOrDefault(c => c.Id == id));
+    }
+
+    public async Task<Customer> AddAsync(Customer entity)
+    {
+        _customers.Add(entity);
+        return await Task.FromResult(entity);
+    }
+    
+    // Other methods...
+}
+```
+
+### Repository Benefits
+- **Abstraction**: Decouples business logic from data access
+- **Testability**: Easy to mock for unit testing
+- **Consistency**: Uniform data access patterns
+- **Flexibility**: Easy to switch data storage implementations
+
+## 13. API Endpoints Documentation
+
+### Customer Endpoints
+
+#### GET /api/customer
+**Description**: Retrieve all customers
+**Response**: Array of CustomerResponseDTO
+```json
+[
+  {
+    "id": "guid-here",
+    "name": "John Doe",
+    "email": "john@email.com",
+    "phone": "+1234567890",
+    "createdAt": "2024-01-01T10:00:00Z"
+  }
+]
+```
+
+#### POST /api/customer
+**Description**: Create a new customer
+**Request Body**:
+```json
+{
+  "name": "John Doe",
+  "email": "john@email.com",
+  "phone": "+1234567890"
+}
+```
+**Response**: CustomerResponseDTO with 201 Created
+
+#### GET /api/customer/{id}
+**Description**: Get customer by ID
+**Response**: CustomerResponseDTO or 404 Not Found
+
+#### PUT /api/customer/{id}
+**Description**: Update customer
+**Request Body**: CustomerRequestDTO
+**Response**: Updated CustomerResponseDTO
+
+#### DELETE /api/customer/{id}
+**Description**: Delete customer
+**Response**: 204 No Content or 404 Not Found
+
+### Account Endpoints
+
+#### GET /api/account
+**Description**: Retrieve all accounts
+**Response**: Array of AccountResponseDTO
+
+#### POST /api/account
+**Description**: Create a new account
+**Request Body**:
+```json
+{
+  "customerId": "customer-guid-here",
+  "initialBalance": 1000.00,
+  "accountType": "Savings"
+}
+```
+**Response**: AccountResponseDTO with generated account number
+
+#### GET /api/account/customer/{customerId}
+**Description**: Get accounts by customer ID
+**Response**: Array of AccountResponseDTO
+
+### Transaction Endpoints
+
+#### POST /api/transaction/transfer
+**Description**: Transfer money between accounts
+**Request Body**:
+```json
+{
+  "fromAccountNumber": "ACC123456789",
+  "toAccountNumber": "ACC987654321",
+  "amount": 250.00,
+  "description": "Payment for services"
+}
+```
+**Response**: TransactionResponseDTO
+
+#### GET /api/transaction/history/{accountId}
+**Description**: Get transaction history with pagination
+**Query Parameters**:
+- `page` (optional): Page number (default: 1)
+- `pageSize` (optional): Items per page (default: 10)
+**Response**: Array of TransactionResponseDTO
+
+#### GET /api/transaction/{id}
+**Description**: Get transaction by ID
+**Response**: TransactionResponseDTO or 404 Not Found
+
+## 14. Error Handling & Validation
+
+### Exception Handling Strategy
+```csharp
+try
+{
+    var result = await _service.CreateAsync(request);
+    return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+}
+catch (InvalidOperationException ex)
+{
+    return BadRequest(ex.Message);
+}
+catch (ArgumentException ex)
+{
+    return NotFound(ex.Message);
+}
+catch (Exception ex)
+{
+    return StatusCode(500, ex.Message);
+}
+```
+
+### HTTP Status Codes Used
+- **200 OK**: Successful GET, PUT operations
+- **201 Created**: Successful POST operations
+- **204 No Content**: Successful DELETE operations
+- **400 Bad Request**: Business logic violations
+- **404 Not Found**: Resource not found
+- **500 Internal Server Error**: Unexpected errors
+
+### Validation Rules
+- **Customer**: Email uniqueness, required fields
+- **Account**: Customer existence, positive initial balance
+- **Transaction**: Account existence, sufficient funds, positive amounts
+
+## 15. Testing Strategy
+
+### Testing Pyramid
+```
+    /\
+   /  \     E2E Tests (Manual/Postman)
+  /____\
+ /      \   Integration Tests (Future)
+/________\
+Unit Tests (xUnit + Moq)
+```
+
+### Unit Testing Approach
+- **Arrange-Act-Assert** pattern
+- **Mocking** external dependencies with Moq
+- **AutoMapper** testing with real configuration
+- **Business Logic** validation testing
+
+### Test Categories
+1. **Service Tests**: Business logic validation
+2. **Repository Tests**: Data access operations
+3. **Controller Tests**: HTTP endpoint behavior
+4. **Mapping Tests**: AutoMapper configuration
+
+## 16. Test Project Structure
+
+```
+BankManagement.Tests/
+├── Services/
+│   └── TransactionServiceTests.cs    # Service layer tests
+├── Repositories/                     # Future repository tests
+├── Controllers/                      # Future controller tests
+├── Mapping/                         # Future mapping tests
+└── BankManagement.Tests.csproj      # Test project configuration
+```
+
+### Test Dependencies
+- **xUnit 2.6.1**: Testing framework
+- **Moq 4.20.69**: Mocking framework
+- **AutoMapper 12.0.1**: Object mapping
+- **Microsoft.NET.Test.Sdk 17.8.0**: Test SDK
+
+## 17. Mocking and Isolation (Moq Usage)
+
+### TransactionServiceTests Example
+```csharp
+public class TransactionServiceTests
+{
+    private readonly Mock<ITransactionRepository> _mockTransactionRepo;
+    private readonly Mock<IAccountRepository> _mockAccountRepo;
+    private readonly IMapper _mapper;
+    private readonly TransactionService _transactionService;
+
+    public TransactionServiceTests()
+    {
+        _mockTransactionRepo = new Mock<ITransactionRepository>();
+        _mockAccountRepo = new Mock<IAccountRepository>();
+        
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+        _mapper = config.CreateMapper();
+        
+        _transactionService = new TransactionService(_mockTransactionRepo.Object, _mockAccountRepo.Object, _mapper);
+    }
+
+    [Fact]
+    public async Task TransferMoney_ValidTransfer_ShouldSucceed()
+    {
+        // Arrange
+        var senderAccount = new Account
+        {
+            Id = "1",
+            AccountNumber = "ACC001",
+            Balance = 1000,
+            IsActive = true
+        };
+        
+        var receiverAccount = new Account
+        {
+            Id = "2",
+            AccountNumber = "ACC002",
+            Balance = 500,
+            IsActive = true
+        };
+
+        var request = new TransactionRequestDTO
+        {
+            FromAccountNumber = "ACC001",
+            ToAccountNumber = "ACC002",
+            Amount = 200,
+            Description = "Test transfer"
+        };
+
+        _mockAccountRepo.Setup(x => x.GetByAccountNumberAsync("ACC001"))
+            .ReturnsAsync(senderAccount);
+        _mockAccountRepo.Setup(x => x.GetByAccountNumberAsync("ACC002"))
+            .ReturnsAsync(receiverAccount);
+        _mockTransactionRepo.Setup(x => x.AddAsync(It.IsAny<Transaction>()))
+            .ReturnsAsync((Transaction t) => t);
+
+        // Act
+        var result = await _transactionService.TransferMoneyAsync(request);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(200, result.Amount);
+        Assert.Equal("Transfer", result.TransactionType);
+        Assert.Equal(800, senderAccount.Balance);
+        Assert.Equal(700, receiverAccount.Balance);
+    }
+}
+```
+
+### Mocking Benefits
+- **Isolation**: Test units in isolation
+- **Control**: Control external dependencies
+- **Speed**: Fast test execution
+- **Reliability**: Consistent test results
+
+## 18. Running Unit Tests
+
+### Test Commands
+```bash
+# Run all tests
+dotnet test
+
+# Run with detailed output
+dotnet test --verbosity normal
+
+# Run specific test class
+dotnet test --filter "TransactionServiceTests"
+
+# Run specific test method
+dotnet test --filter "TransferMoney_ValidTransfer_ShouldSucceed"
+
+# Run tests with coverage
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+### Test Results
+```
+Test Run Successful.
+Total tests: 3
+     Passed: 3
+ Total time: 4.7736 Seconds
+
+✅ TransferMoney_ValidTransfer_ShouldSucceed
+✅ TransferMoney_InsufficientFunds_ShouldThrowException  
+✅ GetTransactionHistory_ValidAccountId_ShouldReturnTransactions
+```
+
+### Continuous Testing
+```bash
+# Watch mode - auto-run tests on file changes
+dotnet watch test
+```
+
+## 19. Code Coverage
+
+### Coverage Tools
+- **Coverlet**: Cross-platform code coverage
+- **ReportGenerator**: Coverage report generation
+
+### Coverage Commands
+```bash
+# Generate coverage report
+dotnet test --collect:"XPlat Code Coverage"
+
+# Install report generator (one-time)
+dotnet tool install -g dotnet-reportgenerator-globaltool
+
+# Generate HTML report
+reportgenerator -reports:"TestResults/*/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+```
+
+### Coverage Targets
+- **Service Layer**: 90%+ coverage
+- **Repository Layer**: 80%+ coverage
+- **Controller Layer**: 70%+ coverage
+
+## 20. Application Settings (`appsettings.json`)
+
+### appsettings.json
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
+```
+
+### appsettings.Development.json
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  }
+}
+```
+
+### Configuration Usage
+```csharp
+// In Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+// Access configuration
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var logLevel = builder.Configuration["Logging:LogLevel:Default"];
+```
+
+## 21. Swagger & API Testing
+
+### Swagger Configuration
+```csharp
+// In Program.cs
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Configure pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+```
+
+### Swagger Features
+- **Interactive Documentation**: Test APIs directly
+- **Schema Generation**: Automatic DTO documentation
+- **Request/Response Examples**: Sample data
+- **Authentication Support**: Future OAuth integration
+
+### API Testing Workflow
+1. **Start Application**: `dotnet run --project BankManagement.API`
+2. **Open Swagger**: Navigate to `https://localhost:7xxx/swagger`
+3. **Test Endpoints**: Use interactive UI
+4. **Export Collection**: Generate Postman collection
+
+### Postman Testing
+```bash
+# Example requests
+POST https://localhost:7xxx/api/customer
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@email.com",
+  "phone": "+1234567890"
+}
+```
+
+## 22. Architecture Principles (Clean Architecture, SOLID)
+
+### Clean Architecture Benefits
+- **Independence**: Business logic independent of frameworks
+- **Testability**: Easy to test each layer
+- **Flexibility**: Easy to change implementations
+- **Maintainability**: Clear separation of concerns
+
+### SOLID Principles Applied
+
+#### Single Responsibility Principle (SRP)
+- Each class has one reason to change
+- Controllers handle HTTP concerns only
+- Services handle business logic only
+- Repositories handle data access only
+
+#### Open/Closed Principle (OCP)
+- Interfaces allow extension without modification
+- New repositories can be added without changing services
+- New services can be added without changing controllers
+
+#### Liskov Substitution Principle (LSP)
+- Implementations can be substituted for interfaces
+- Mock objects can replace real implementations in tests
+
+#### Interface Segregation Principle (ISP)
+- Specific interfaces for each repository type
+- Clients depend only on methods they use
+
+#### Dependency Inversion Principle (DIP)
+- High-level modules don't depend on low-level modules
+- Both depend on abstractions (interfaces)
+- Dependency injection enforces this principle
+
+### Design Patterns Used
+- **Repository Pattern**: Data access abstraction
+- **Service Layer Pattern**: Business logic encapsulation
+- **DTO Pattern**: Data transfer object pattern
+- **Dependency Injection**: Inversion of control
+- **Factory Pattern**: AutoMapper profile creation
+
+## 23. Known Issues & Fixes
+
+### Original Buggy Code
+```csharp
+public async Task TransferMoney(string fromAcc, string toAcc, decimal amount)
+{
+    var sender = _accountRepo.GetByAccountNumber(fromAcc);
+    var receiver = _accountRepo.GetByAccountNumber(toAcc);
+
+    if(sender.Balance < amount)
+        throw new Exception("Insufficient funds");
+
+    sender.Balance -= amount;
+    receiver.Balance += amount;
+}
+```
+
+### Issues Identified
+1. **Async Usage**: Not using await with async methods
+2. **Null References**: No null checks for accounts
+3. **Input Validation**: No amount validation
+4. **Account Status**: Not checking if accounts are active
+5. **Exception Types**: Using generic Exception
+6. **Concurrency**: No thread safety
+7. **Data Persistence**: Changes not saved
+
+### Fixed Implementation
+```csharp
+public async Task<TransactionResponseDTO> TransferMoneyAsync(TransactionRequestDTO request)
+{
+    // Fix 1: Use async methods properly with await
+    var sender = await _accountRepo.GetByAccountNumberAsync(request.FromAccountNumber);
+    var receiver = await _accountRepo.GetByAccountNumberAsync(request.ToAccountNumber);
+
+    // Fix 2: Add null checks to prevent NullReferenceException
+    if (sender == null)
+        throw new ArgumentException("Sender account not found");
+    if (receiver == null)
+        throw new ArgumentException("Receiver account not found");
+
+    // Fix 3: Add validation for amount
+    if (request.Amount <= 0)
+        throw new ArgumentException("Amount must be positive");
+
+    // Fix 4: Check account status
+    if (!sender.IsActive)
+        throw new InvalidOperationException("Sender account is inactive");
+    if (!receiver.IsActive)
+        throw new InvalidOperationException("Receiver account is inactive");
+
+    // Fix 5: Use proper exception type for business logic
+    if (sender.Balance < request.Amount)
+        throw new InvalidOperationException("Insufficient funds");
+
+    // Fix 6: Perform transfer (basic concurrency handled by in-memory collections)
+    sender.Balance -= request.Amount;
+    receiver.Balance += request.Amount;
+
+    // Fix 7: Persist changes using async methods
+    await _accountRepo.UpdateAsync(sender);
+    await _accountRepo.UpdateAsync(receiver);
+
+    // Create transaction record
+    var transaction = new Transaction
+    {
+        FromAccountId = sender.Id,
+        ToAccountId = receiver.Id,
+        Amount = request.Amount,
+        TransactionType = "Transfer",
+        Description = request.Description,
+        Status = "Completed"
+    };
+
+    var createdTransaction = await _transactionRepo.AddAsync(transaction);
+    return _mapper.Map<TransactionResponseDTO>(createdTransaction);
+}
+```
+
+### Fixes Applied
+1. ✅ **Async Usage**: Proper async/await pattern
+2. ✅ **Null Checks**: Validation to prevent null reference exceptions
+3. ✅ **Input Validation**: Check for positive amount
+4. ✅ **Account Status**: Verify accounts are active before transfer
+5. ✅ **Exception Types**: Use appropriate exception types
+6. ✅ **Data Persistence**: Ensure changes are saved
+7. ✅ **Transaction Record**: Create audit trail
+
+## 24. Future Enhancements
+
+### Short-term Improvements
+- **Database Integration**: Replace in-memory storage with Entity Framework
+- **Authentication**: Add JWT-based authentication
+- **Logging**: Implement structured logging with Serilog
+- **Validation**: Add FluentValidation for request validation
+- **Caching**: Implement Redis caching for performance
+
+### Medium-term Features
+- **Account Types**: Support for different account types (Checking, Savings, Credit)
+- **Interest Calculation**: Automatic interest calculation
+- **Transaction Limits**: Daily/monthly transaction limits
+- **Notifications**: Email/SMS notifications for transactions
+- **Audit Trail**: Comprehensive audit logging
+
+### Long-term Vision
+- **Microservices**: Split into separate services
+- **Event Sourcing**: Implement event-driven architecture
+- **CQRS**: Command Query Responsibility Segregation
+- **API Gateway**: Centralized API management
+- **Monitoring**: Application performance monitoring
+
+### Technical Debt
+- **Error Handling**: Global exception handling middleware
+- **Validation**: Centralized validation framework
+- **Documentation**: API documentation improvements
+- **Performance**: Query optimization and caching
+- **Security**: Security headers and HTTPS enforcement
+
+## 25. Contributing Guidelines
+
+### Development Workflow
+1. **Fork** the repository
+2. **Create** feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to branch (`git push origin feature/amazing-feature`)
+5. **Open** Pull Request
+
+## 26. Appendix / Additional Resources
+
+### Learning Resources
+- [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [ASP.NET Core Documentation](https://docs.microsoft.com/en-us/aspnet/core/)
+- [AutoMapper Documentation](https://automapper.org/)
+- [xUnit Documentation](https://xunit.net/)
+- [Moq Documentation](https://github.com/moq/moq4)
+
+
+### Useful Commands Reference
+```bash
+# Solution Management
+dotnet new sln -n BankManagement
+dotnet sln add **/*.csproj
+
+# Project Management
+dotnet new webapi -n BankManagement.API
+dotnet new classlib -n BankManagement.Core
+dotnet add reference ../BankManagement.Core/BankManagement.Core.csproj
+
+# Package Management
+dotnet add package AutoMapper
+dotnet remove package PackageName
+dotnet list package
+
+# Build & Run
+dotnet build
+dotnet run
+dotnet watch run
+dotnet publish -c Release
+
+# Testing
+dotnet test
+dotnet test --logger trx
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+
+
+
+
+---
+## 27. Code
+
+## 1. Core Layer - Entities
+
+### Customer.cs
+```csharp
+namespace BankManagement.Core.Entities
+{
+    public class Customer
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public List<Account> Accounts { get; set; } = new();
+    }
+}
+```
+
+### Account.cs
+```csharp
+namespace BankManagement.Core.Entities
+{
+    public class Account
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string AccountNumber { get; set; } = string.Empty;
+        public string CustomerId { get; set; } = string.Empty;
+        public decimal Balance { get; set; }
+        public string AccountType { get; set; } = "Savings";
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public bool IsActive { get; set; } = true;
+    }
+}
+```
+
+### Transaction.cs
+```csharp
+namespace BankManagement.Core.Entities
+{
+    public class Transaction
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string FromAccountId { get; set; } = string.Empty;
+        public string ToAccountId { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public string TransactionType { get; set; } = string.Empty;
+        public DateTime TransactionDate { get; set; } = DateTime.UtcNow;
+        public string Description { get; set; } = string.Empty;
+        public string Status { get; set; } = "Completed";
+    }
+}
+```
+
+## 2. Core Layer - Interfaces
+
+### IRepository.cs (Generic Repository)
+```csharp
+namespace BankManagement.Core.Interfaces
+{
+    public interface IRepository<T> where T : class
+    {
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T?> GetByIdAsync(string id);
+        Task<T> AddAsync(T entity);
+        Task<T> UpdateAsync(T entity);
+        Task<bool> DeleteAsync(string id);
+    }
+}
+```
+
+### ICustomerRepository.cs
+```csharp
+using BankManagement.Core.Entities;
+
+namespace BankManagement.Core.Interfaces
+{
+    public interface ICustomerRepository : IRepository<Customer>
+    {
+        Task<Customer?> GetByEmailAsync(string email);
+    }
+}
+```
+
+### IAccountRepository.cs
+```csharp
+using BankManagement.Core.Entities;
+
+namespace BankManagement.Core.Interfaces
+{
+    public interface IAccountRepository : IRepository<Account>
+    {
+        Task<Account?> GetByAccountNumberAsync(string accountNumber);
+        Task<IEnumerable<Account>> GetByCustomerIdAsync(string customerId);
+    }
+}
+```
+
+### ITransactionRepository.cs
+```csharp
+using BankManagement.Core.Entities;
+
+namespace BankManagement.Core.Interfaces
+{
+    public interface ITransactionRepository : IRepository<Transaction>
+    {
+        Task<IEnumerable<Transaction>> GetByAccountIdAsync(string accountId, int page = 1, int pageSize = 10);
+    }
+}
+```
+
+## 3. Core Layer - DTOs
+
+### CustomerRequestDTO.cs
+```csharp
+namespace BankManagement.Core.DTOs
+{
+    public class CustomerRequestDTO
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+    }
+}
+```
+
+### CustomerResponseDTO.cs
+```csharp
+namespace BankManagement.Core.DTOs
+{
+    public class CustomerResponseDTO
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+    }
+}
+```
+
+### AccountRequestDTO.cs
+```csharp
+namespace BankManagement.Core.DTOs
+{
+    public class AccountRequestDTO
+    {
+        public string CustomerId { get; set; } = string.Empty;
+        public decimal InitialBalance { get; set; }
+        public string AccountType { get; set; } = "Savings";
+    }
+}
+```
+
+### AccountResponseDTO.cs
+```csharp
+namespace BankManagement.Core.DTOs
+{
+    public class AccountResponseDTO
+    {
+        public string Id { get; set; } = string.Empty;
+        public string AccountNumber { get; set; } = string.Empty;
+        public string CustomerId { get; set; } = string.Empty;
+        public decimal Balance { get; set; }
+        public string AccountType { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public bool IsActive { get; set; }
+    }
+}
+```
+
+### TransactionRequestDTO.cs
+```csharp
+namespace BankManagement.Core.DTOs
+{
+    public class TransactionRequestDTO
+    {
+        public string FromAccountNumber { get; set; } = string.Empty;
+        public string ToAccountNumber { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public string Description { get; set; } = string.Empty;
+    }
+}
+```
+
+### TransactionResponseDTO.cs
+```csharp
+namespace BankManagement.Core.DTOs
+{
+    public class TransactionResponseDTO
+    {
+        public string Id { get; set; } = string.Empty;
+        public string FromAccountId { get; set; } = string.Empty;
+        public string ToAccountId { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public string TransactionType { get; set; } = string.Empty;
+        public DateTime TransactionDate { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+    }
+}
+```
+
+## 4. Core Layer - Service Interfaces
+
+### ICustomerService.cs
+```csharp
+using BankManagement.Core.DTOs;
+
+namespace BankManagement.Core.Interfaces
+{
+    public interface ICustomerService
+    {
+        Task<CustomerResponseDTO> CreateCustomerAsync(CustomerRequestDTO request);
+        Task<CustomerResponseDTO?> GetCustomerByIdAsync(string id);
+        Task<IEnumerable<CustomerResponseDTO>> GetAllCustomersAsync();
+        Task<CustomerResponseDTO> UpdateCustomerAsync(string id, CustomerRequestDTO request);
+        Task<bool> DeleteCustomerAsync(string id);
+    }
+}
+```
+
+### IAccountService.cs
+```csharp
+using BankManagement.Core.DTOs;
+
+namespace BankManagement.Core.Interfaces
+{
+    public interface IAccountService
+    {
+        Task<AccountResponseDTO> CreateAccountAsync(AccountRequestDTO request);
+        Task<AccountResponseDTO?> GetAccountByIdAsync(string id);
+        Task<IEnumerable<AccountResponseDTO>> GetAllAccountsAsync();
+        Task<IEnumerable<AccountResponseDTO>> GetAccountsByCustomerIdAsync(string customerId);
+        Task<AccountResponseDTO> UpdateAccountAsync(string id, AccountRequestDTO request);
+        Task<bool> DeleteAccountAsync(string id);
+    }
+}
+```
+
+### ITransactionService.cs
+```csharp
+using BankManagement.Core.DTOs;
+
+namespace BankManagement.Core.Interfaces
+{
+    public interface ITransactionService
+    {
+        Task<TransactionResponseDTO> TransferMoneyAsync(TransactionRequestDTO request);
+        Task<IEnumerable<TransactionResponseDTO>> GetTransactionHistoryAsync(string accountId, int page = 1, int pageSize = 10);
+        Task<TransactionResponseDTO?> GetTransactionByIdAsync(string id);
+        Task<IEnumerable<TransactionResponseDTO>> GetAllTransactionsAsync();
+    }
+}
+```
+
+## 5. Infrastructure Layer - Repositories
+
+### CustomerRepository.cs
+```csharp
+using BankManagement.Core.Entities;
+using BankManagement.Core.Interfaces;
+
+namespace BankManagement.Infrastructure.Repositories
+{
+    public class CustomerRepository : ICustomerRepository
+    {
+        private readonly List<Customer> _customers = new();
+
+        public async Task<IEnumerable<Customer>> GetAllAsync()
+        {
+            return await Task.FromResult(_customers.AsEnumerable());
+        }
+
+        public async Task<Customer?> GetByIdAsync(string id)
+        {
+            return await Task.FromResult(_customers.FirstOrDefault(c => c.Id == id));
+        }
+
+        public async Task<Customer?> GetByEmailAsync(string email)
+        {
+            return await Task.FromResult(_customers.FirstOrDefault(c => c.Email == email));
+        }
+
+        public async Task<Customer> AddAsync(Customer entity)
+        {
+            _customers.Add(entity);
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<Customer> UpdateAsync(Customer entity)
+        {
+            var existing = _customers.FirstOrDefault(c => c.Id == entity.Id);
+            if (existing != null)
+            {
+                existing.Name = entity.Name;
+                existing.Email = entity.Email;
+                existing.Phone = entity.Phone;
+            }
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<bool> DeleteAsync(string id)
+        {
+            var customer = _customers.FirstOrDefault(c => c.Id == id);
+            if (customer != null)
+            {
+                _customers.Remove(customer);
+                return await Task.FromResult(true);
+            }
+            return await Task.FromResult(false);
+        }
+    }
+}
+```
+
+### AccountRepository.cs
+```csharp
+using BankManagement.Core.Entities;
+using BankManagement.Core.Interfaces;
+
+namespace BankManagement.Infrastructure.Repositories
+{
+    public class AccountRepository : IAccountRepository
+    {
+        private readonly List<Account> _accounts = new();
+
+        public async Task<IEnumerable<Account>> GetAllAsync()
+        {
+            return await Task.FromResult(_accounts.AsEnumerable());
+        }
+
+        public async Task<Account?> GetByIdAsync(string id)
+        {
+            return await Task.FromResult(_accounts.FirstOrDefault(a => a.Id == id));
+        }
+
+        public async Task<Account?> GetByAccountNumberAsync(string accountNumber)
+        {
+            return await Task.FromResult(_accounts.FirstOrDefault(a => a.AccountNumber == accountNumber));
+        }
+
+        public async Task<IEnumerable<Account>> GetByCustomerIdAsync(string customerId)
+        {
+            return await Task.FromResult(_accounts.Where(a => a.CustomerId == customerId));
+        }
+
+        public async Task<Account> AddAsync(Account entity)
+        {
+            entity.AccountNumber = GenerateAccountNumber();
+            _accounts.Add(entity);
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<Account> UpdateAsync(Account entity)
+        {
+            var existing = _accounts.FirstOrDefault(a => a.Id == entity.Id);
+            if (existing != null)
+            {
+                existing.Balance = entity.Balance;
+                existing.AccountType = entity.AccountType;
+                existing.IsActive = entity.IsActive;
+            }
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<bool> DeleteAsync(string id)
+        {
+            var account = _accounts.FirstOrDefault(a => a.Id == id);
+            if (account != null)
+            {
+                account.IsActive = false;
+                return await Task.FromResult(true);
+            }
+            return await Task.FromResult(false);
+        }
+
+        private string GenerateAccountNumber()
+        {
+            return $"ACC{DateTime.Now.Ticks}";
+        }
+    }
+}
+```
+
+### TransactionRepository.cs
+```csharp
+using BankManagement.Core.Entities;
+using BankManagement.Core.Interfaces;
+
+namespace BankManagement.Infrastructure.Repositories
+{
+    public class TransactionRepository : ITransactionRepository
+    {
+        private readonly List<Transaction> _transactions = new();
+
+        public async Task<IEnumerable<Transaction>> GetAllAsync()
+        {
+            return await Task.FromResult(_transactions.AsEnumerable());
+        }
+
+        public async Task<Transaction?> GetByIdAsync(string id)
+        {
+            return await Task.FromResult(_transactions.FirstOrDefault(t => t.Id == id));
+        }
+
+        public async Task<IEnumerable<Transaction>> GetByAccountIdAsync(string accountId, int page = 1, int pageSize = 10)
+        {
+            var transactions = _transactions
+                .Where(t => t.FromAccountId == accountId || t.ToAccountId == accountId)
+                .OrderByDescending(t => t.TransactionDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize);
+            
+            return await Task.FromResult(transactions);
+        }
+
+        public async Task<Transaction> AddAsync(Transaction entity)
+        {
+            _transactions.Add(entity);
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<Transaction> UpdateAsync(Transaction entity)
+        {
+            var existing = _transactions.FirstOrDefault(t => t.Id == entity.Id);
+            if (existing != null)
+            {
+                existing.Status = entity.Status;
+                existing.Description = entity.Description;
+            }
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<bool> DeleteAsync(string id)
+        {
+            var transaction = _transactions.FirstOrDefault(t => t.Id == id);
+            if (transaction != null)
+            {
+                _transactions.Remove(transaction);
+                return await Task.FromResult(true);
+            }
+            return await Task.FromResult(false);
+        }
+    }
+}
+```
+
+## 6. Application Layer - AutoMapper
+
+### MappingProfile.cs
+```csharp
+using AutoMapper;
+using BankManagement.Core.DTOs;
+using BankManagement.Core.Entities;
+
+namespace BankManagement.Application.Mapping
+{
+    public class MappingProfile : Profile
+    {
+        public MappingProfile()
+        {
+            CreateMap<Customer, CustomerResponseDTO>();
+            CreateMap<CustomerRequestDTO, Customer>();
+
+            CreateMap<Account, AccountResponseDTO>();
+            CreateMap<AccountRequestDTO, Account>()
+                .ForMember(dest => dest.Balance, opt => opt.MapFrom(src => src.InitialBalance));
+
+            CreateMap<Transaction, TransactionResponseDTO>();
+            CreateMap<TransactionRequestDTO, Transaction>();
+        }
+    }
+}
+```
+
+## 7. Application Layer - Services
+
+### CustomerService.cs
+```csharp
+using AutoMapper;
+using BankManagement.Core.DTOs;
+using BankManagement.Core.Entities;
+using BankManagement.Core.Interfaces;
+
+namespace BankManagement.Application.Services
+{
+    public class CustomerService : ICustomerService
+    {
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IMapper _mapper;
+
+        public CustomerService(ICustomerRepository customerRepository, IMapper mapper)
+        {
+            _customerRepository = customerRepository;
+            _mapper = mapper;
+        }
+
+        public async Task<CustomerResponseDTO> CreateCustomerAsync(CustomerRequestDTO request)
+        {
+            var existingCustomer = await _customerRepository.GetByEmailAsync(request.Email);
+            if (existingCustomer != null)
+                throw new InvalidOperationException("Customer with this email already exists");
+
+            var customer = _mapper.Map<Customer>(request);
+            var createdCustomer = await _customerRepository.AddAsync(customer);
+            return _mapper.Map<CustomerResponseDTO>(createdCustomer);
+        }
+
+        public async Task<CustomerResponseDTO?> GetCustomerByIdAsync(string id)
+        {
+            var customer = await _customerRepository.GetByIdAsync(id);
+            return customer != null ? _mapper.Map<CustomerResponseDTO>(customer) : null;
+        }
+
+        public async Task<IEnumerable<CustomerResponseDTO>> GetAllCustomersAsync()
+        {
+            var customers = await _customerRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<CustomerResponseDTO>>(customers);
+        }
+
+        public async Task<CustomerResponseDTO> UpdateCustomerAsync(string id, CustomerRequestDTO request)
+        {
+            var existingCustomer = await _customerRepository.GetByIdAsync(id);
+            if (existingCustomer == null)
+                throw new ArgumentException("Customer not found");
+
+            _mapper.Map(request, existingCustomer);
+            var updatedCustomer = await _customerRepository.UpdateAsync(existingCustomer);
+            return _mapper.Map<CustomerResponseDTO>(updatedCustomer);
+        }
+
+        public async Task<bool> DeleteCustomerAsync(string id)
+        {
+            return await _customerRepository.DeleteAsync(id);
+        }
+    }
+}
+```
+
+### AccountService.cs
+```csharp
+using AutoMapper;
+using BankManagement.Core.DTOs;
+using BankManagement.Core.Entities;
+using BankManagement.Core.Interfaces;
+
+namespace BankManagement.Application.Services
+{
+    public class AccountService : IAccountService
+    {
+        private readonly IAccountRepository _accountRepository;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IMapper _mapper;
+
+        public AccountService(IAccountRepository accountRepository, ICustomerRepository customerRepository, IMapper mapper)
+        {
+            _accountRepository = accountRepository;
+            _customerRepository = customerRepository;
+            _mapper = mapper;
+        }
+
+        public async Task<AccountResponseDTO> CreateAccountAsync(AccountRequestDTO request)
+        {
+            var customer = await _customerRepository.GetByIdAsync(request.CustomerId);
+            if (customer == null)
+                throw new ArgumentException("Customer not found");
+
+            var account = _mapper.Map<Account>(request);
+            var createdAccount = await _accountRepository.AddAsync(account);
+            return _mapper.Map<AccountResponseDTO>(createdAccount);
+        }
+
+        public async Task<AccountResponseDTO?> GetAccountByIdAsync(string id)
+        {
+            var account = await _accountRepository.GetByIdAsync(id);
+            return account != null ? _mapper.Map<AccountResponseDTO>(account) : null;
+        }
+
+        public async Task<IEnumerable<AccountResponseDTO>> GetAllAccountsAsync()
+        {
+            var accounts = await _accountRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<AccountResponseDTO>>(accounts);
+        }
+
+        public async Task<IEnumerable<AccountResponseDTO>> GetAccountsByCustomerIdAsync(string customerId)
+        {
+            var accounts = await _accountRepository.GetByCustomerIdAsync(customerId);
+            return _mapper.Map<IEnumerable<AccountResponseDTO>>(accounts);
+        }
+
+        public async Task<AccountResponseDTO> UpdateAccountAsync(string id, AccountRequestDTO request)
+        {
+            var existingAccount = await _accountRepository.GetByIdAsync(id);
+            if (existingAccount == null)
+                throw new ArgumentException("Account not found");
+
+            existingAccount.AccountType = request.AccountType;
+            var updatedAccount = await _accountRepository.UpdateAsync(existingAccount);
+            return _mapper.Map<AccountResponseDTO>(updatedAccount);
+        }
+
+        public async Task<bool> DeleteAccountAsync(string id)
+        {
+            return await _accountRepository.DeleteAsync(id);
+        }
+    }
+}
+```
+
+### TransactionService.cs
+```csharp
+using AutoMapper;
+using BankManagement.Core.DTOs;
+using BankManagement.Core.Entities;
+using BankManagement.Core.Interfaces;
+
+namespace BankManagement.Application.Services
+{
+    public class TransactionService : ITransactionService
+    {
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IMapper _mapper;
+
+        public TransactionService(ITransactionRepository transactionRepository, IAccountRepository accountRepository, IMapper mapper)
+        {
+            _transactionRepository = transactionRepository;
+            _accountRepository = accountRepository;
+            _mapper = mapper;
+        }
+
+        public async Task<TransactionResponseDTO> TransferMoneyAsync(TransactionRequestDTO request)
+        {
+            // Get sender and receiver accounts
+            var senderAccount = await _accountRepository.GetByAccountNumberAsync(request.FromAccountNumber);
+            var receiverAccount = await _accountRepository.GetByAccountNumberAsync(request.ToAccountNumber);
+
+            // Validate accounts exist
+            if (senderAccount == null)
+                throw new ArgumentException("Sender account not found");
+            if (receiverAccount == null)
+                throw new ArgumentException("Receiver account not found");
+
+            // Validate accounts are active
+            if (!senderAccount.IsActive)
+                throw new InvalidOperationException("Sender account is inactive");
+            if (!receiverAccount.IsActive)
+                throw new InvalidOperationException("Receiver account is inactive");
+
+            // Validate sufficient balance
+            if (senderAccount.Balance < request.Amount)
+                throw new InvalidOperationException("Insufficient funds");
+
+            // Validate amount is positive
+            if (request.Amount <= 0)
+                throw new ArgumentException("Amount must be positive");
+
+            // Perform transfer
+            senderAccount.Balance -= request.Amount;
+            receiverAccount.Balance += request.Amount;
+
+            // Update accounts
+            await _accountRepository.UpdateAsync(senderAccount);
+            await _accountRepository.UpdateAsync(receiverAccount);
+
+            // Create transaction record
+            var transaction = new Transaction
+            {
+                FromAccountId = senderAccount.Id,
+                ToAccountId = receiverAccount.Id,
+                Amount = request.Amount,
+                TransactionType = "Transfer",
+                Description = request.Description,
+                Status = "Completed"
+            };
+
+            var createdTransaction = await _transactionRepository.AddAsync(transaction);
+            return _mapper.Map<TransactionResponseDTO>(createdTransaction);
+        }
+
+        public async Task<IEnumerable<TransactionResponseDTO>> GetTransactionHistoryAsync(string accountId, int page = 1, int pageSize = 10)
+        {
+            var transactions = await _transactionRepository.GetByAccountIdAsync(accountId, page, pageSize);
+            return _mapper.Map<IEnumerable<TransactionResponseDTO>>(transactions);
+        }
+
+        public async Task<TransactionResponseDTO?> GetTransactionByIdAsync(string id)
+        {
+            var transaction = await _transactionRepository.GetByIdAsync(id);
+            return transaction != null ? _mapper.Map<TransactionResponseDTO>(transaction) : null;
+        }
+
+        public async Task<IEnumerable<TransactionResponseDTO>> GetAllTransactionsAsync()
+        {
+            var transactions = await _transactionRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<TransactionResponseDTO>>(transactions);
+        }
+    }
+}
+```
+
+## 8. API Layer - Controllers
+
+### CustomerController.cs
+```csharp
+using BankManagement.Core.DTOs;
+using BankManagement.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace BankManagement.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CustomerController : ControllerBase
+    {
+        private readonly ICustomerService _customerService;
+
+        public CustomerController(ICustomerService customerService)
+        {
+            _customerService = customerService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CustomerResponseDTO>>> GetAllCustomers()
+        {
+            try
+            {
+                var customers = await _customerService.GetAllCustomersAsync();
+                return Ok(customers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomerResponseDTO>> GetCustomerById(string id)
+        {
+            try
+            {
+                var customer = await _customerService.GetCustomerByIdAsync(id);
+                if (customer == null)
+                    return NotFound();
+                return Ok(customer);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CustomerResponseDTO>> CreateCustomer([FromBody] CustomerRequestDTO request)
+        {
+            try
+            {
+                var customer = await _customerService.CreateCustomerAsync(request);
+                return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<CustomerResponseDTO>> UpdateCustomer(string id, [FromBody] CustomerRequestDTO request)
+        {
+            try
+            {
+                var customer = await _customerService.UpdateCustomerAsync(id, request);
+                return Ok(customer);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteCustomer(string id)
+        {
+            try
+            {
+                var result = await _customerService.DeleteCustomerAsync(id);
+                if (!result)
+                    return NotFound();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+    }
+}
+```
+
+### AccountController.cs
+```csharp
+using BankManagement.Core.DTOs;
+using BankManagement.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace BankManagement.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AccountController : ControllerBase
+    {
+        private readonly IAccountService _accountService;
+
+        public AccountController(IAccountService accountService)
+        {
+            _accountService = accountService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<AccountResponseDTO>>> GetAllAccounts()
+        {
+            try
+            {
+                var accounts = await _accountService.GetAllAccountsAsync();
+                return Ok(accounts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AccountResponseDTO>> GetAccountById(string id)
+        {
+            try
+            {
+                var account = await _accountService.GetAccountByIdAsync(id);
+                if (account == null)
+                    return NotFound();
+                return Ok(account);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("customer/{customerId}")]
+        public async Task<ActionResult<IEnumerable<AccountResponseDTO>>> GetAccountsByCustomerId(string customerId)
+        {
+            try
+            {
+                var accounts = await _accountService.GetAccountsByCustomerIdAsync(customerId);
+                return Ok(accounts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<AccountResponseDTO>> CreateAccount([FromBody] AccountRequestDTO request)
+        {
+            try
+            {
+                var account = await _accountService.CreateAccountAsync(request);
+                return CreatedAtAction(nameof(GetAccountById), new { id = account.Id }, account);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AccountResponseDTO>> UpdateAccount(string id, [FromBody] AccountRequestDTO request)
+        {
+            try
+            {
+                var account = await _accountService.UpdateAccountAsync(id, request);
+                return Ok(account);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAccount(string id)
+        {
+            try
+            {
+                var result = await _accountService.DeleteAccountAsync(id);
+                if (!result)
+                    return NotFound();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+    }
+}
+```
+
+### TransactionController.cs
+```csharp
+using BankManagement.Core.DTOs;
+using BankManagement.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace BankManagement.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TransactionController : ControllerBase
+    {
+        private readonly ITransactionService _transactionService;
+
+        public TransactionController(ITransactionService transactionService)
+        {
+            _transactionService = transactionService;
+        }
+
+        [HttpPost("transfer")]
+        public async Task<ActionResult<TransactionResponseDTO>> TransferMoney([FromBody] TransactionRequestDTO request)
+        {
+            try
+            {
+                var transaction = await _transactionService.TransferMoneyAsync(request);
+                return Ok(transaction);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("history/{accountId}")]
+        public async Task<ActionResult<IEnumerable<TransactionResponseDTO>>> GetTransactionHistory(
+            string accountId, 
+            [FromQuery] int page = 1, 
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var transactions = await _transactionService.GetTransactionHistoryAsync(accountId, page, pageSize);
+                return Ok(transactions);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TransactionResponseDTO>> GetTransactionById(string id)
+        {
+            try
+            {
+                var transaction = await _transactionService.GetTransactionByIdAsync(id);
+                if (transaction == null)
+                    return NotFound();
+                return Ok(transaction);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TransactionResponseDTO>>> GetAllTransactions()
+        {
+            try
+            {
+                var transactions = await _transactionService.GetAllTransactionsAsync();
+                return Ok(transactions);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+    }
+}
+```
+
+## 9. API Layer - Program.cs (Dependency Injection)
+
+### Program.cs
+```csharp
+using BankManagement.Application.Mapping;
+using BankManagement.Application.Services;
+using BankManagement.Core.Interfaces;
+using BankManagement.Infrastructure.Repositories;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Add AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+// Register repositories as singletons for in-memory data persistence
+builder.Services.AddSingleton<ICustomerRepository, CustomerRepository>();
+builder.Services.AddSingleton<IAccountRepository, AccountRepository>();
+builder.Services.AddSingleton<ITransactionRepository, TransactionRepository>();
+
+// Register services
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+```
+
+## 10. Unit Tests
+
+### TransactionServiceTests.cs
+```csharp
+using AutoMapper;
+using BankManagement.Application.Mapping;
+using BankManagement.Application.Services;
+using BankManagement.Core.DTOs;
+using BankManagement.Core.Entities;
+using BankManagement.Core.Interfaces;
+using Moq;
+using Xunit;
+
+namespace BankManagement.Tests.Services
+{
+    public class TransactionServiceTests
+    {
+        private readonly Mock<ITransactionRepository> _mockTransactionRepo;
+        private readonly Mock<IAccountRepository> _mockAccountRepo;
+        private readonly IMapper _mapper;
+        private readonly TransactionService _transactionService;
+
+        public TransactionServiceTests()
+        {
+            _mockTransactionRepo = new Mock<ITransactionRepository>();
+            _mockAccountRepo = new Mock<IAccountRepository>();
+            
+            var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+            _mapper = config.CreateMapper();
+            
+            _transactionService = new TransactionService(_mockTransactionRepo.Object, _mockAccountRepo.Object, _mapper);
+        }
+
+        [Fact]
+        public async Task TransferMoney_ValidTransfer_ShouldSucceed()
+        {
+            // Arrange
+            var senderAccount = new Account
+            {
+                Id = "1",
+                AccountNumber = "ACC001",
+                Balance = 1000,
+                IsActive = true
+            };
+            
+            var receiverAccount = new Account
+            {
+                Id = "2",
+                AccountNumber = "ACC002",
+                Balance = 500,
+                IsActive = true
+            };
+
+            var request = new TransactionRequestDTO
+            {
+                FromAccountNumber = "ACC001",
+                ToAccountNumber = "ACC002",
+                Amount = 200,
+                Description = "Test transfer"
+            };
+
+            _mockAccountRepo.Setup(x => x.GetByAccountNumberAsync("ACC001"))
+                .ReturnsAsync(senderAccount);
+            _mockAccountRepo.Setup(x => x.GetByAccountNumberAsync("ACC002"))
+                .ReturnsAsync(receiverAccount);
+            _mockTransactionRepo.Setup(x => x.AddAsync(It.IsAny<Transaction>()))
+                .ReturnsAsync((Transaction t) => t);
+
+            // Act
+            var result = await _transactionService.TransferMoneyAsync(request);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.Amount);
+            Assert.Equal("Transfer", result.TransactionType);
+            Assert.Equal(800, senderAccount.Balance);
+            Assert.Equal(700, receiverAccount.Balance);
+        }
+
+        [Fact]
+        public async Task TransferMoney_InsufficientFunds_ShouldThrowException()
+        {
+            // Arrange
+            var senderAccount = new Account
+            {
+                Id = "1",
+                AccountNumber = "ACC001",
+                Balance = 100,
+                IsActive = true
+            };
+            
+            var receiverAccount = new Account
+            {
+                Id = "2",
+                AccountNumber = "ACC002",
+                Balance = 500,
+                IsActive = true
+            };
+
+            var request = new TransactionRequestDTO
+            {
+                FromAccountNumber = "ACC001",
+                ToAccountNumber = "ACC002",
+                Amount = 200,
+                Description = "Test transfer"
+            };
+
+            _mockAccountRepo.Setup(x => x.GetByAccountNumberAsync("ACC001"))
+                .ReturnsAsync(senderAccount);
+            _mockAccountRepo.Setup(x => x.GetByAccountNumberAsync("ACC002"))
+                .ReturnsAsync(receiverAccount);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => _transactionService.TransferMoneyAsync(request));
+        }
+
+        [Fact]
+        public async Task GetTransactionHistory_ValidAccountId_ShouldReturnTransactions()
+        {
+            // Arrange
+            var transactions = new List<Transaction>
+            {
+                new Transaction { Id = "1", FromAccountId = "ACC001", Amount = 100 },
+                new Transaction { Id = "2", ToAccountId = "ACC001", Amount = 50 }
+            };
+
+            _mockTransactionRepo.Setup(x => x.GetByAccountIdAsync("ACC001", 1, 10))
+                .ReturnsAsync(transactions);
+
+            // Act
+            var result = await _transactionService.GetTransactionHistoryAsync("ACC001");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+        }
+    }
+}
+```
+
+## 11. Project Files
+
+### BankManagement.Core.csproj
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>
+```
+
+### BankManagement.Application.csproj
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BankManagement.Core\BankManagement.Core.csproj" />
+  </ItemGroup>
+</Project>
+```
+
+### BankManagement.Infrastructure.csproj
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BankManagement.Core\BankManagement.Core.csproj" />
+  </ItemGroup>
+</Project>
+```
+
+### BankManagement.API.csproj
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BankManagement.Application\BankManagement.Application.csproj" />
+    <ProjectReference Include="..\BankManagement.Core\BankManagement.Core.csproj" />
+    <ProjectReference Include="..\BankManagement.Infrastructure\BankManagement.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
+```
+
+### BankManagement.Tests.csproj
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.69" />
+    <PackageReference Include="xunit" Version="2.6.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BankManagement.Application\BankManagement.Application.csproj" />
+    <ProjectReference Include="..\BankManagement.Core\BankManagement.Core.csproj" />
+  </ItemGroup>
+</Project>
+```
+
+## 12. Bug Fix Documentation
+
+### BuggyCodeFix.cs
+```csharp
+// BUGGY CODE DEBUGGING CHALLENGE - FIXED VERSION
+
+// Original buggy code:
+/*
+public async Task TransferMoney(string fromAcc, string toAcc, decimal amount)
+{
+    var sender = _accountRepo.GetByAccountNumber(fromAcc);
+    var receiver = _accountRepo.GetByAccountNumber(toAcc);
+
+    if(sender.Balance < amount)
+        throw new Exception("Insufficient funds");
+
+    sender.Balance -= amount;
+    receiver.Balance += amount;
+}
+*/
+
+// FIXED VERSION:
+public async Task TransferMoney(string fromAcc, string toAcc, decimal amount)
+{
+    // Fix 1: Use async methods properly with await
+    var sender = await _accountRepo.GetByAccountNumberAsync(fromAcc);
+    var receiver = await _accountRepo.GetByAccountNumberAsync(toAcc);
+
+    // Fix 2: Add null checks to prevent NullReferenceException
+    if (sender == null)
+        throw new ArgumentException("Sender account not found");
+    if (receiver == null)
+        throw new ArgumentException("Receiver account not found");
+
+    // Fix 3: Add validation for amount
+    if (amount <= 0)
+        throw new ArgumentException("Amount must be positive");
+
+    // Fix 4: Check account status
+    if (!sender.IsActive)
+        throw new InvalidOperationException("Sender account is inactive");
+    if (!receiver.IsActive)
+        throw new InvalidOperationException("Receiver account is inactive");
+
+    // Fix 5: Use proper exception type for business logic
+    if (sender.Balance < amount)
+        throw new InvalidOperationException("Insufficient funds");
+
+    // Fix 6: For concurrency, we could use locks or atomic operations
+    // In a real scenario, we'd use database transactions or optimistic concurrency
+    lock (_lockObject) // Assuming _lockObject is a private readonly object
+    {
+        sender.Balance -= amount;
+        receiver.Balance += amount;
+    }
+
+    // Fix 7: Persist changes using async methods
+    await _accountRepo.UpdateAsync(sender);
+    await _accountRepo.UpdateAsync(receiver);
+}
+
+/*
+FIXES EXPLAINED:
+1. Async Usage: Changed synchronous calls to async/await pattern
+2. Null Checks: Added validation to prevent null reference exceptions
+3. Input Validation: Added check for positive amount
+4. Account Status: Verify accounts are active before transfer
+5. Exception Types: Use appropriate exception types for different scenarios
+6. Concurrency: Added lock for thread safety (basic approach)
+7. Data Persistence: Ensure changes are saved using async update methods
+*/
+```
+
+---
+# 🏦 BankPro - Bank Management System
+
+[![.NET](https://img.shields.io/badge/.NET-8.0-blue.svg)](https://dotnet.microsoft.com/)
+
+A comprehensive **Bank Management System** built with **.NET 8 Web API** using **Clean Architecture** principles. This system provides complete banking operations including customer management, account handling, and secure money transfers with in-memory data storage.
+
+---
+
+## 📋 Table of Contents
+
+- [🎯 Project Overview](#-project-overview)
+- [🏗️ Architecture](#️-architecture)
+- [🚀 Features](#-features)
+- [🛠️ Technology Stack](#️-technology-stack)
+- [📁 Project Structure](#-project-structure)
+- [⚡ Quick Start](#-quick-start)
+- [🌐 API Endpoints](#-api-endpoints)
+- [📊 API Sample Outputs](#-api-sample-outputs)
+- [🧪 Testing](#-testing)
+- [🤝 Contributing](#-contributing)
+
+---
+
+## 🎯 Project Overview
+
+**BankPro** is a modern banking system designed to demonstrate enterprise-level software development practices. Built as part of a .NET Core assessment, it showcases:
+
+- **Clean Architecture** implementation
+- **Generic Repository Pattern** with in-memory storage
+- **Service Layer** with comprehensive business logic
+- **RESTful API** design with proper HTTP status codes
+- **Unit Testing** with xUnit and Moq
+- **AutoMapper** for object-to-object mapping
+- **Dependency Injection** throughout the application
+
+
+
+## 🏗️ Architecture
+
+The project follows **Clean Architecture** principles with clear separation of concerns:
+
+```
+┌─────────────────────────────────────────┐
+│              Presentation               │
+│         (BankManagement.API)            │
+│    Controllers, Program.cs, DI Config  │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│             Application                 │
+│       (BankManagement.Application)      │
+│     Services, AutoMapper, Business      │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│            Infrastructure               │
+│     (BankManagement.Infrastructure)     │
+│    Repositories, Data Access Layer     │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│               Domain                    │
+│         (BankManagement.Core)           │
+│   Entities, DTOs, Interfaces, Rules    │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## 🚀 Features
+
+### ✨ Core Banking Features
+- 👥 **Customer Management** - Create, read, update, delete customers
+- 💳 **Account Management** - Multiple account types with balance tracking
+- 💸 **Money Transfers** - Secure transfers between accounts with validation
+- 📊 **Transaction History** - Complete audit trail with pagination
+- 🔍 **Account Lookup** - Search by account number or customer ID
+
+### 🛡️ Security & Validation
+- ✅ **Business Rule Validation** - Insufficient funds, account status checks
+- 🚫 **Input Validation** - Comprehensive request validation
+- 🔒 **Exception Handling** - Proper error responses with meaningful messages
+- 📝 **Audit Trail** - Complete transaction logging
+
+### 🏗️ Technical Features
+- 🎯 **Clean Architecture** - Separation of concerns
+- 🔄 **Generic Repository Pattern** - Reusable data access layer
+- 🗺️ **AutoMapper Integration** - Automatic DTO mapping
+- 💉 **Dependency Injection** - Loose coupling and testability
+- ⚡ **Async/Await** - Non-blocking operations
+- 🧪 **Unit Testing** - Comprehensive test coverage
+
+---
+
+## 🛠️ Technology Stack
+
+### Core Technologies
+- **.NET 8.0** - Latest .NET framework
+- **ASP.NET Core Web API** - RESTful API framework
+- **C# 12** - Modern C# features
+
+### Libraries & Packages
+| Package | Version | Purpose |
+|---------|---------|---------|
+| **AutoMapper** | 12.0.1 | Object-to-object mapping |
+| **AutoMapper.Extensions.Microsoft.DependencyInjection** | 12.0.1 | DI integration |
+| **Swashbuckle.AspNetCore** | 6.6.2 | Swagger/OpenAPI documentation |
+| **xUnit** | 2.6.1 | Unit testing framework |
+| **Moq** | 4.20.69 | Mocking framework |
+| **Microsoft.NET.Test.Sdk** | 17.8.0 | Test SDK |
+
+### Development Tools
+- **Visual Studio 2022** / **VS Code**
+- **Postman** - API testing
+- **Swagger UI** - Interactive API documentation
+- **Git** - Version control
+
+---
+
+## 📁 Project Structure
+
+```
+BankManagement/
+├── 📄 BankManagement.sln                    # Solution file
+├── 📄 README.md                             # This file
+├── 📄 BuggyCodeFix.cs                       # Bug fix documentation
+├── 📄 COMPLETE_PROJECT_DOCUMENTATION.md     # Detailed documentation
+│
+├── 📂 BankManagement.Core/                  # 🎯 DOMAIN LAYER
+│   ├── 📂 Entities/                         # Domain entities
+│   │   ├── Customer.cs                      # Customer entity
+│   │   ├── Account.cs                       # Account entity
+│   │   └── Transaction.cs                   # Transaction entity
+│   ├── 📂 DTOs/                            # Data Transfer Objects
+│   │   ├── CustomerRequestDTO.cs            # Customer input DTO
+│   │   ├── CustomerResponseDTO.cs           # Customer output DTO
+│   │   ├── AccountRequestDTO.cs             # Account input DTO
+│   │   ├── AccountResponseDTO.cs            # Account output DTO
+│   │   ├── TransactionRequestDTO.cs         # Transaction input DTO
+│   │   └── TransactionResponseDTO.cs        # Transaction output DTO
+│   └── 📂 Interfaces/                       # Contracts & abstractions
+│       ├── IRepository.cs                   # Generic repository interface
+│       ├── ICustomerRepository.cs           # Customer repository contract
+│       ├── IAccountRepository.cs            # Account repository contract
+│       ├── ITransactionRepository.cs        # Transaction repository contract
+│       ├── ICustomerService.cs              # Customer service contract
+│       ├── IAccountService.cs               # Account service contract
+│       └── ITransactionService.cs           # Transaction service contract
+│
+├── 📂 BankManagement.Application/           # 🧠 APPLICATION LAYER
+│   ├── 📂 Services/                         # Business logic services
+│   │   ├── CustomerService.cs               # Customer business operations
+│   │   ├── AccountService.cs                # Account business operations
+│   │   └── TransactionService.cs            # Transaction business operations
+│   └── 📂 Mapping/                          # Object mapping configuration
+│       └── MappingProfile.cs                # AutoMapper profile
+│
+├── 📂 BankManagement.Infrastructure/        # 🏗️ INFRASTRUCTURE LAYER
+│   └── 📂 Repositories/                     # Data access implementations
+│       ├── CustomerRepository.cs            # Customer data operations
+│       ├── AccountRepository.cs             # Account data operations
+│       └── TransactionRepository.cs         # Transaction data operations
+│
+├── 📂 BankManagement.API/                   # 🌐 PRESENTATION LAYER
+│   ├── 📂 Controllers/                      # API endpoints
+│   │   ├── CustomerController.cs            # Customer API endpoints
+│   │   ├── AccountController.cs             # Account API endpoints
+│   │   └── TransactionController.cs         # Transaction API endpoints
+│   ├── Program.cs                           # Application startup & DI
+│   ├── appsettings.json                     # Application settings
+│   └── BankManagement.API.http              # HTTP test requests
+│
+└── 📂 BankManagement.Tests/                 # 🧪 TEST LAYER
+    └── 📂 Services/                         # Service unit tests
+        └── TransactionServiceTests.cs       # Transaction service tests
+```
+
+---
+
+## ⚡ Quick Start
+
+### Prerequisites
+- **.NET 8.0 SDK** or later
+- **Visual Studio 2022** / **VS Code**
+- **Postman** (optional, for API testing)
+
+### 🚀 Installation & Setup
+
+1. **Clone the Repository**
+   ```bash
+   git clone <repository-url>
+   cd BankManagement
+   ```
+
+2. **Restore NuGet Packages**
+   ```bash
+   dotnet restore
+   ```
+
+3. **Build the Solution**
+   ```bash
+   dotnet build
+   ```
+
+4. **Run Unit Tests**
+   ```bash
+   dotnet test
+   ```
+
+5. **Start the API**
+   ```bash
+   dotnet run --project BankManagement.API
+   ```
+
+6. **Access Swagger UI**
+   ```
+   https://localhost:7xxx/swagger
+   ```
+
+### 🎯 Verification Steps
+
+✅ **API is running**: Navigate to `https://localhost:7xxx/swagger`  
+✅ **Tests pass**: Run `dotnet test` - should show 3 passing tests  
+✅ **Endpoints work**: Try GET `/api/customer` - should return empty array `[]`
+
+---
+
+## 🌐 API Endpoints
+
+### 👥 Customer Management
+
+| Method | Endpoint | Description | Status Codes |
+|--------|----------|-------------|--------------|
+| `GET` | `/api/customer` | Get all customers | 200 |
+| `GET` | `/api/customer/{id}` | Get customer by ID | 200, 404 |
+| `POST` | `/api/customer` | Create new customer | 201, 400 |
+| `PUT` | `/api/customer/{id}` | Update customer | 200, 404 |
+| `DELETE` | `/api/customer/{id}` | Delete customer | 204, 404 |
+
+### 💳 Account Management
+
+| Method | Endpoint | Description | Status Codes |
+|--------|----------|-------------|--------------|
+| `GET` | `/api/account` | Get all accounts | 200 |
+| `GET` | `/api/account/{id}` | Get account by ID | 200, 404 |
+| `GET` | `/api/account/customer/{id}` | Get accounts by customer | 200 |
+| `POST` | `/api/account` | Create new account | 201, 400 |
+| `PUT` | `/api/account/{id}` | Update account | 200, 404 |
+| `DELETE` | `/api/account/{id}` | Close account | 204, 404 |
+
+### 💸 Transaction Management
+
+| Method | Endpoint | Description | Status Codes |
+|--------|----------|-------------|--------------|
+| `POST` | `/api/transaction/transfer` | Transfer money | 200, 400 |
+| `GET` | `/api/transaction/history/{id}` | Get transaction history | 200 |
+| `GET` | `/api/transaction/{id}` | Get transaction by ID | 200, 404 |
+| `GET` | `/api/transaction` | Get all transactions | 200 |
+
+---
+
+## 📊 API Sample Outputs
+
+### 🏠 Swagger UI Overview
+
+**Sample Swagger UI Interface:**
+```
+BankPro API v1.0
+Swagger UI
+
+Schemas:
+- CustomerRequestDTO
+- CustomerResponseDTO  
+- AccountRequestDTO
+- AccountResponseDTO
+- TransactionRequestDTO
+- TransactionResponseDTO
+
+Controllers:
+▼ Customer
+  GET /api/customer
+  POST /api/customer
+  GET /api/customer/{id}
+  PUT /api/customer/{id}
+  DELETE /api/customer/{id}
+
+▼ Account  
+  GET /api/account
+  POST /api/account
+  GET /api/account/{id}
+  PUT /api/account/{id}
+  DELETE /api/account/{id}
+  GET /api/account/customer/{customerId}
+
+▼ Transaction
+  GET /api/transaction
+  POST /api/transaction/transfer
+  GET /api/transaction/{id}
+  GET /api/transaction/history/{accountId}
+```
+
+---
+
+### 👥 Customer Operations
+
+#### ➕ Create Customer
+**Request:**
+```json
+POST /api/customer
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@email.com",
+  "phone": "+1234567890"
+}
+```
+
+**Sample Response (201 Created):**
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "John Doe",
+  "email": "john.doe@email.com",
+  "phone": "+1234567890",
+  "createdAt": "2024-08-18T10:30:00.000Z"
+}
+```
+
+---
+
+#### 📋 Get All Customers
+**Request:**
+```
+GET /api/customer
+```
+
+**Sample Response (200 OK):**
+```json
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "name": "John Doe",
+    "email": "john.doe@email.com",
+    "phone": "+1234567890",
+    "createdAt": "2024-08-18T10:30:00.000Z"
+  },
+  {
+    "id": "7fb92c81-8429-4873-a4fd-3d874e77bbc7",
+    "name": "Jane Smith",
+    "email": "jane.smith@email.com",
+    "phone": "+0987654321",
+    "createdAt": "2024-08-18T10:35:00.000Z"
+  }
+]
+```
+
+---
+
+#### 🔍 Get Customer by ID
+**Request:**
+```
+GET /api/customer/3fa85f64-5717-4562-b3fc-2c963f66afa6
+```
+
+**Sample Response (200 OK):**
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "John Doe",
+  "email": "john.doe@email.com",
+  "phone": "+1234567890",
+  "createdAt": "2024-08-18T10:30:00.000Z"
+}
+```
+
+---
+
+### 💳 Account Operations
+
+#### ➕ Create Account
+**Request:**
+```json
+POST /api/account
+Content-Type: application/json
+
+{
+  "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "initialBalance": 1000.00,
+  "accountType": "Savings"
+}
+```
+
+**Sample Response (201 Created):**
+```json
+{
+  "id": "9bc42c45-6789-4def-8901-234567890abc",
+  "accountNumber": "ACC638123456789",
+  "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "balance": 1000.00,
+  "accountType": "Savings",
+  "createdAt": "2024-08-18T10:40:00.000Z",
+  "isActive": true
+}
+```
+
+---
+
+#### 📋 Get Accounts by Customer
+**Request:**
+```
+GET /api/account/customer/3fa85f64-5717-4562-b3fc-2c963f66afa6
+```
+
+**Sample Response (200 OK):**
+```json
+[
+  {
+    "id": "9bc42c45-6789-4def-8901-234567890abc",
+    "accountNumber": "ACC638123456789",
+    "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "balance": 1000.00,
+    "accountType": "Savings",
+    "createdAt": "2024-08-18T10:40:00.000Z",
+    "isActive": true
+  },
+  {
+    "id": "def56789-0123-4567-8901-23456789abcd",
+    "accountNumber": "ACC638987654321",
+    "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "balance": 500.00,
+    "accountType": "Checking",
+    "createdAt": "2024-08-18T10:45:00.000Z",
+    "isActive": true
+  }
+]
+```
+
+---
+
+### 💸 Transaction Operations
+
+#### 💰 Transfer Money
+**Request:**
+```json
+POST /api/transaction/transfer
+Content-Type: application/json
+
+{
+  "fromAccountNumber": "ACC638123456789",
+  "toAccountNumber": "ACC638987654321",
+  "amount": 250.00,
+  "description": "Payment for services"
+}
+```
+
+**Sample Response (200 OK):**
+```json
+{
+  "id": "abc12345-def6-7890-1234-56789abcdef0",
+  "fromAccountId": "9bc42c45-6789-4def-8901-234567890abc",
+  "toAccountId": "def56789-0123-4567-8901-23456789abcd",
+  "amount": 250.00,
+  "transactionType": "Transfer",
+  "transactionDate": "2024-08-18T10:50:00.000Z",
+  "description": "Payment for services",
+  "status": "Completed"
+}
+```
+
+---
+
+#### 📊 Get Transaction History
+**Request:**
+```
+GET /api/transaction/history/9bc42c45-6789-4def-8901-234567890abc?page=1&pageSize=10
+```
+
+**Sample Response (200 OK):**
+```json
+[
+  {
+    "id": "abc12345-def6-7890-1234-56789abcdef0",
+    "fromAccountId": "9bc42c45-6789-4def-8901-234567890abc",
+    "toAccountId": "def56789-0123-4567-8901-23456789abcd",
+    "amount": 250.00,
+    "transactionType": "Transfer",
+    "transactionDate": "2024-08-18T10:50:00.000Z",
+    "description": "Payment for services",
+    "status": "Completed"
+  },
+  {
+    "id": "fed09876-5432-1098-7654-321098765432",
+    "fromAccountId": "def56789-0123-4567-8901-23456789abcd",
+    "toAccountId": "9bc42c45-6789-4def-8901-234567890abc",
+    "amount": 100.00,
+    "transactionType": "Transfer",
+    "transactionDate": "2024-08-18T09:30:00.000Z",
+    "description": "Refund",
+    "status": "Completed"
+  }
+]
+```
+
+---
+
+### ❌ Error Handling Examples
+
+#### 🚫 Insufficient Funds Error
+**Request:**
+```json
+POST /api/transaction/transfer
+Content-Type: application/json
+
+{
+  "fromAccountNumber": "ACC638123456789",
+  "toAccountNumber": "ACC638987654321",
+  "amount": 5000.00,
+  "description": "Large transfer"
+}
+```
+
+**Sample Error Response (400 Bad Request):**
+```json
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "Insufficient funds",
+  "traceId": "00-abc123def456789-012345678901234-00"
+}
+```
+
+---
+
+#### 🔍 Account Not Found Error
+**Request:**
+```
+GET /api/account/invalid-account-id-12345
+```
+
+**Sample Error Response (404 Not Found):**
+```json
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "Account not found",
+  "traceId": "00-def456abc789012-345678901234567-00"
+}
+```
+
+---
+
+#### 🚫 Validation Error
+**Request:**
+```json
+POST /api/customer
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "invalid-email",
+  "phone": ""
+}
+```
+
+**Sample Error Response (400 Bad Request):**
+```json
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "errors": {
+    "Name": ["The Name field is required."],
+    "Email": ["The Email field is not a valid e-mail address."],
+    "Phone": ["The Phone field is required."]
+  },
+  "traceId": "00-789012345abc678-901234567890123-00"
+}
+```
+
+---
+
+## 🧪 Testing
+
+### Unit Test Results
+
+**Sample Test Execution Output:**
+```
+PS C:\BankManagement> dotnet test
+
+Build started...
+Build succeeded.
+
+Test run for C:\BankManagement\BankManagement.Tests\bin\Debug\net8.0\BankManagement.Tests.dll (.NETCoreApp,Version=v8.0)
+Microsoft (R) Test Execution Command Line Tool Version 17.8.0 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.3.1+6b60a9e56a (64-bit .NET 8.0.18)
+[xUnit.net 00:00:00.55]   Discovering: BankManagement.Tests
+[xUnit.net 00:00:00.79]   Discovered:  BankManagement.Tests
+[xUnit.net 00:00:00.80]   Starting:    BankManagement.Tests
+
+  Passed BankManagement.Tests.Services.TransactionServiceTests.TransferMoney_ValidTransfer_ShouldSucceed [236 ms]
+  Passed BankManagement.Tests.Services.TransactionServiceTests.GetTransactionHistory_ValidAccountId_ShouldReturnTransactions [8 ms]
+  Passed BankManagement.Tests.Services.TransactionServiceTests.TransferMoney_InsufficientFunds_ShouldThrowException [2 ms]
+
+[xUnit.net 00:00:01.08]   Finished:    BankManagement.Tests
+
+Test Run Successful.
+Total tests: 3
+     Passed: 3
+ Total time: 4.7736 Seconds
+```
+
+### 🧪 Running Tests
+
+```bash
+# Run all tests
+dotnet test
+
+# Run with detailed output
+dotnet test --verbosity normal
+
+# Run specific test class
+dotnet test --filter "TransactionServiceTests"
+
+# Run with coverage
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+---
+
+## 🤝 Contributing
+
+### Development Workflow
+
+1. **Fork** the repository
+2. **Create** feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to branch (`git push origin feature/amazing-feature`)
+5. **Open** Pull Request
+
+### Code Standards
+
+- Follow **Microsoft C# Coding Conventions**
+- Use **PascalCase** for public members, **camelCase** for private
+- Add **XML documentation** for public APIs
+- Maintain **minimum 80% test coverage**
+- Follow **Clean Architecture** principles
+
+
+---
+
+## 🛠️ Troubleshooting
+
+**Common Issues:**
+
+1. **Port Already in Use**
+   ```bash
+   # Kill process using port
+   netstat -ano | findstr :7xxx
+   taskkill /PID <process-id> /F
+   ```
+
+2. **Package Restore Issues**
+   ```bash
+   # Clear NuGet cache
+   dotnet nuget locals all --clear
+   dotnet restore
+   ```
+
+3. **Build Errors**
+   ```bash
+   # Clean and rebuild
+   dotnet clean
+   dotnet build
+   ```
+
+
+
+---
+
+<div align="center">
+
+### 🌟 Author
+
+**Hari Ram L**
+
+[⬆ Back to Top](#-bankpro---bank-management-system)
+
+</div>
