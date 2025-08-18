@@ -1,9 +1,6 @@
-# 🏦 BankPro - Bank Management System
+ # 🏦 BankPro - Bank Management System
 
 [![.NET](https://img.shields.io/badge/.NET-8.0-blue.svg)](https://dotnet.microsoft.com/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com)
-[![Coverage](https://img.shields.io/badge/coverage-85%25-yellow.svg)](https://github.com)
 
 A comprehensive **Bank Management System** built with **.NET 8 Web API** using **Clean Architecture** principles. This system provides complete banking operations including customer management, account handling, and secure money transfers with in-memory data storage.
 
@@ -262,13 +259,46 @@ BankManagement/
 
 ---
 
-## 📸 API Screenshots
+
+## 📊 API Sample Outputs
 
 ### 🏠 Swagger UI Overview
 
-> **📷 Screenshot Placeholder**: Swagger UI main page showing all available endpoints
+**Sample Swagger UI Interface:**
+```
+BankPro API v1.0
+Swagger UI
 
-*[Add screenshot of Swagger UI homepage here]*
+Schemas:
+- CustomerRequestDTO
+- CustomerResponseDTO  
+- AccountRequestDTO
+- AccountResponseDTO
+- TransactionRequestDTO
+- TransactionResponseDTO
+
+Controllers:
+▼ Customer
+  GET /api/customer
+  POST /api/customer
+  GET /api/customer/{id}
+  PUT /api/customer/{id}
+  DELETE /api/customer/{id}
+
+▼ Account  
+  GET /api/account
+  POST /api/account
+  GET /api/account/{id}
+  PUT /api/account/{id}
+  DELETE /api/account/{id}
+  GET /api/account/customer/{customerId}
+
+▼ Transaction
+  GET /api/transaction
+  POST /api/transaction/transfer
+  GET /api/transaction/{id}
+  GET /api/transaction/history/{accountId}
+```
 
 ---
 
@@ -278,6 +308,8 @@ BankManagement/
 **Request:**
 ```json
 POST /api/customer
+Content-Type: application/json
+
 {
   "name": "John Doe",
   "email": "john.doe@email.com",
@@ -285,20 +317,19 @@ POST /api/customer
 }
 ```
 
-> **📷 Screenshot Placeholder**: Swagger UI showing Create Customer request and response
-
-*[Add screenshot of Create Customer API call here]*
-
-**Expected Response:**
+**Sample Response (201 Created):**
 ```json
 {
-  "id": "guid-here",
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   "name": "John Doe",
   "email": "john.doe@email.com",
   "phone": "+1234567890",
-  "createdAt": "2024-01-01T10:00:00Z"
+  "createdAt": "2024-08-18T10:30:00.000Z"
 }
 ```
+**Screenshot**
+
+![Customer POST](https://github.com/user-attachments/assets/b5499fc2-9afa-4799-8ce1-c78e29e81a49)
 
 ---
 
@@ -308,99 +339,236 @@ POST /api/customer
 GET /api/customer
 ```
 
-> **📷 Screenshot Placeholder**: Swagger UI showing Get All Customers response
-
-*[Add screenshot of Get All Customers API call here]*
-
-**Expected Response:**
+**Sample Response (200 OK):**
 ```json
 [
   {
-    "id": "customer-guid-1",
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "name": "John Doe",
     "email": "john.doe@email.com",
     "phone": "+1234567890",
-    "createdAt": "2024-01-01T10:00:00Z"
+    "createdAt": "2024-08-18T10:30:00.000Z"
   },
   {
-    "id": "customer-guid-2",
+    "id": "7fb92c81-8429-4873-a4fd-3d874e77bbc7",
     "name": "Jane Smith",
     "email": "jane.smith@email.com",
     "phone": "+0987654321",
-    "createdAt": "2024-01-01T11:00:00Z"
+    "createdAt": "2024-08-18T10:35:00.000Z"
   }
 ]
 ```
+**Screenshot**
+![CUSTOMER GET ALL](https://github.com/user-attachments/assets/c9de32fb-288b-498b-92bb-e6397deb1be6)
+
+---
+
+#### 🔍 Get Customer by ID
+**Request:**
+```
+GET /api/customer/3fa85f64-5717-4562-b3fc-2c963f66afa6
+```
+
+**Sample Response (200 OK):**
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "John Doe",
+  "email": "john.doe@email.com",
+  "phone": "+1234567890",
+  "createdAt": "2024-08-18T10:30:00.000Z"
+}
+```
+**Screenshot**
+![CUSTOMER GET BY ID](https://github.com/user-attachments/assets/b16c7ad2-1c24-442e-8515-ab6de29eaf7f)
+
+
+#### ✏️ Update Customer
+
+**Request:**
+
+```
+PUT /api/customer/3fa85f64-5717-4562-b3fc-2c963f66afa6
+```
+
+**Request Body:**
+
+```json
+{
+  "name": "John Updated Doe",
+  "email": "john.updated@email.com",
+  "phone": "+1234567899"
+}
+```
+
+**Sample Response (200 OK):**
+
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "John Updated Doe",
+  "email": "john.updated@email.com",
+  "phone": "+1234567899",
+  "createdAt": "2024-08-18T10:30:00.000Z"
+}
+```
+
+**Screenshot**
+![CUSTOMER PUT](https://github.com/user-attachments/assets/b4ec8f76-d2a0-492f-a689-6d55a60eabd7)
+
+
+
+---
+
+#### 🗑️ Delete Customer
+
+**Request:**
+
+```
+DELETE /api/customer/3fa85f64-5717-4562-b3fc-2c963f66afa6
+```
+
+**Sample Response (204 No Content):**
+
+```
+(No response body)
+```
+
+**Screenshot**
+
+![Customer Delete](https://github.com/user-attachments/assets/2c7e2444-1ceb-45d6-a01a-0d78095fca22)
+
 
 ---
 
 ### 💳 Account Operations
 
 #### ➕ Create Account
+
 **Request:**
+
 ```json
 POST /api/account
+Content-Type: application/json
+
 {
-  "customerId": "customer-guid-here",
+  "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   "initialBalance": 1000.00,
   "accountType": "Savings"
 }
 ```
 
-> **📷 Screenshot Placeholder**: Swagger UI showing Create Account request and response
+**Sample Response (201 Created):**
 
-*[Add screenshot of Create Account API call here]*
-
-**Expected Response:**
 ```json
 {
-  "id": "account-guid-here",
+  "id": "9bc42c45-6789-4def-8901-234567890abc",
   "accountNumber": "ACC638123456789",
-  "customerId": "customer-guid-here",
+  "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   "balance": 1000.00,
   "accountType": "Savings",
-  "createdAt": "2024-01-01T10:00:00Z",
+  "createdAt": "2024-08-18T10:40:00.000Z",
   "isActive": true
 }
 ```
 
+**Screenshot**
+![ACCOUNT POST](https://github.com/user-attachments/assets/44d19c93-d1b9-4ff1-8e37-a46f49da79d1)
+
+
 ---
 
 #### 📋 Get Accounts by Customer
+
 **Request:**
+
 ```
-GET /api/account/customer/{customerId}
+GET /api/account/customer/3fa85f64-5717-4562-b3fc-2c963f66afa6
 ```
 
-> **📷 Screenshot Placeholder**: Swagger UI showing Get Accounts by Customer response
+**Sample Response (200 OK):**
 
-*[Add screenshot of Get Accounts by Customer API call here]*
-
-**Expected Response:**
 ```json
 [
   {
-    "id": "account-guid-1",
+    "id": "9bc42c45-6789-4def-8901-234567890abc",
     "accountNumber": "ACC638123456789",
-    "customerId": "customer-guid-here",
+    "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "balance": 1000.00,
     "accountType": "Savings",
-    "createdAt": "2024-01-01T10:00:00Z",
+    "createdAt": "2024-08-18T10:40:00.000Z",
     "isActive": true
   },
   {
-    "id": "account-guid-2",
+    "id": "def56789-0123-4567-8901-23456789abcd",
     "accountNumber": "ACC638987654321",
-    "customerId": "customer-guid-here",
+    "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "balance": 500.00,
     "accountType": "Checking",
-    "createdAt": "2024-01-01T11:00:00Z",
+    "createdAt": "2024-08-18T10:45:00.000Z",
     "isActive": true
   }
 ]
 ```
+**Screenshot**
+![ACCOUNT GET BY CUSTOMER ID](https://github.com/user-attachments/assets/6d450dde-4362-4bc5-b8cf-6bb33d8f12b2)
 
 ---
+
+#### ✏️ Update Account
+
+**Request:**
+
+```
+PUT /api/account/9bc42c45-6789-4def-8901-234567890abc
+Content-Type: application/json
+
+{
+  "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "initialBalance": 1200.00,
+  "accountType": "Checking"
+}
+```
+
+**Sample Response (200 OK):**
+
+```json
+{
+  "id": "9bc42c45-6789-4def-8901-234567890abc",
+  "accountNumber": "ACC638123456789",
+  "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "balance": 1200.00,
+  "accountType": "Checking",
+  "createdAt": "2024-08-18T10:40:00.000Z",
+  "isActive": true
+}
+```
+
+**Screenshot**
+![Account PUT](https://github.com/user-attachments/assets/7ac8996d-c70f-4650-b3ae-2fd5c5563d47)
+
+---
+
+#### ❌ Delete Account
+
+**Request:**
+
+```
+DELETE /api/account/9bc42c45-6789-4def-8901-234567890abc
+```
+
+**Sample Response:**
+
+```
+204 No Content
+```
+
+**Screenshot**
+![ACCOUNT DELETE](https://github.com/user-attachments/assets/363cd0a1-6692-40cc-99e2-3ba77c4203e2)
+
+---
+
+
 
 ### 💸 Transaction Operations
 
@@ -408,6 +576,8 @@ GET /api/account/customer/{customerId}
 **Request:**
 ```json
 POST /api/transaction/transfer
+Content-Type: application/json
+
 {
   "fromAccountNumber": "ACC638123456789",
   "toAccountNumber": "ACC638987654321",
@@ -415,20 +585,152 @@ POST /api/transaction/transfer
   "description": "Payment for services"
 }
 ```
-
-> **📷 Screenshot Placeholder**: Swagger UI showing Transfer Money request and response
-
-*[Add screenshot of Transfer Money API call here]*
-
-**Expected Response:**
+**Sample Response (200 OK):**
 ```json
 {
-  "id": "transaction-guid-here",
-  "fromAccountId": "sender-account-id",
-  "toAccountId": "receiver-account-id",
+  "id": "abc12345-def6-7890-1234-56789abcdef0",
+  "fromAccountId": "9bc42c45-6789-4def-8901-234567890abc",
+  "toAccountId": "def56789-0123-4567-8901-23456789abcd",
   "amount": 250.00,
   "transactionType": "Transfer",
-  "transactionDate": "2024-01-01T10:00:00Z",
+  "transactionDate": "2024-08-18T10:50:00.000Z",
+  "description": "Payment for services",
+  "status": "Completed"
+}
+```
+**Screenshot**
+![TRANSACTION POST](https://github.com/user-attachments/assets/5401d744-57d5-4ae3-8493-1462200ac017)
+
+
+---
+
+#### 📊 Get Transaction History
+**Request:**
+```
+GET /api/transaction/history/9bc42c45-6789-4def-8901-234567890abc?page=1&pageSize=10
+```
+
+**Sample Response (200 OK):**
+```json
+[
+  {
+    "id": "abc12345-def6-7890-1234-56789abcdef0",
+    "fromAccountId": "9bc42c45-6789-4def-8901-234567890abc",
+    "toAccountId": "def56789-0123-4567-8901-23456789abcd",
+    "amount": 250.00,
+    "transactionType": "Transfer",
+    "transactionDate": "2024-08-18T10:50:00.000Z",
+    "description": "Payment for services",
+    "status": "Completed"
+  },
+  {
+    "id": "fed09876-5432-1098-7654-321098765432",
+    "fromAccountId": "def56789-0123-4567-8901-23456789abcd",
+    "toAccountId": "9bc42c45-6789-4def-8901-234567890abc",
+    "amount": 100.00,
+    "transactionType": "Transfer",
+    "transactionDate": "2024-08-18T09:30:00.000Z",
+    "description": "Refund",
+    "status": "Completed"
+  }
+]
+```
+**Screenshot**
+
+![Transaction Transaction History By AccountId](https://github.com/user-attachments/assets/9beabf40-3f46-41d6-8fea-d8caebe3509c)
+
+
+---
+
+#### 📋 Get All Transactions
+
+**Request:**
+
+```
+GET /api/transaction
+```
+
+**Sample Response (200 OK):**
+
+```json
+[
+  {
+    "id": "abc12345-def6-7890-1234-56789abcdef0",
+    "fromAccountId": "9bc42c45-6789-4def-8901-234567890abc",
+    "toAccountId": "def56789-0123-4567-8901-23456789abcd",
+    "amount": 250.00,
+    "transactionType": "Transfer",
+    "transactionDate": "2024-08-18T10:50:00.000Z",
+    "description": "Payment for services",
+    "status": "Completed"
+  },
+  {
+    "id": "fed09876-5432-1098-7654-321098765432",
+    "fromAccountId": "def56789-0123-4567-8901-23456789abcd",
+    "toAccountId": "9bc42c45-6789-4def-8901-234567890abc",
+    "amount": 100.00,
+    "transactionType": "Refund",
+    "transactionDate": "2024-08-17T09:30:00.000Z",
+    "description": "Refund",
+    "status": "Completed"
+  },
+  {
+    "id": "bca98765-4321-0987-6543-210987654321",
+    "fromAccountId": "12345678-abcd-efgh-ijkl-9876543210mn",
+    "toAccountId": "87654321-nmlk-jihg-fedc-1234567890op",
+    "amount": 500.00,
+    "transactionType": "Transfer",
+    "transactionDate": "2024-08-16T14:15:00.000Z",
+    "description": "Invoice payment",
+    "status": "Completed"
+  },
+  {
+    "id": "cde23456-7890-1234-5678-901234567890",
+    "fromAccountId": "23456789-bcde-fghi-jklm-0987654321no",
+    "toAccountId": "98765432-ponm-lkji-hgfe-2109876543qp",
+    "amount": 75.00,
+    "transactionType": "Transfer",
+    "transactionDate": "2024-08-15T12:00:00.000Z",
+    "description": "Gift",
+    "status": "Completed"
+  },
+  {
+    "id": "def34567-8901-2345-6789-012345678901",
+    "fromAccountId": "34567890-cdef-ghij-klmn-1098765432op",
+    "toAccountId": "87654321-qrst-uvwx-yzab-3456789012cd",
+    "amount": 200.00,
+    "transactionType": "Transfer",
+    "transactionDate": "2024-08-14T08:45:00.000Z",
+    "description": "Loan repayment",
+    "status": "Completed"
+  }
+]
+```
+
+**Screenshot**
+![TRANSACTION GETALL](https://github.com/user-attachments/assets/5581d113-6b28-44b8-a63d-228f5f2fbdd5)
+
+
+---
+
+#### 🔍 Get Transaction by ID
+
+**Request:**
+
+```
+GET /api/transaction/abc12345-def6-7890-1234-56789abcdef0
+```
+
+**Sample Response (200 OK):**
+
+```json
+{
+  "id": "abc12345-def6-7890-1234-56789abcdef0",
+  "fromAccountId": "9bc42c45-6789-4def-8901-234567890abc",
+  "toAccountId": "def56789-0123-4567-8901-23456789abcd",
+  "amount": 250.00,
+  "transactionType": "Transfer",
+  "transactionDate": "2024-08-18T10:50:00.000Z",
   "description": "Payment for services",
   "status": "Completed"
 }
@@ -436,43 +738,55 @@ POST /api/transaction/transfer
 
 ---
 
-#### 📊 Get Transaction History
 **Request:**
+
 ```
-GET /api/transaction/history/{accountId}?page=1&pageSize=10
+GET /api/transaction/fed09876-5432-1098-7654-321098765432
 ```
 
-> **📷 Screenshot Placeholder**: Swagger UI showing Transaction History response
+**Sample Response (200 OK):**
 
-*[Add screenshot of Transaction History API call here]*
-
-**Expected Response:**
 ```json
-[
-  {
-    "id": "transaction-guid-1",
-    "fromAccountId": "account-id",
-    "toAccountId": "other-account-id",
-    "amount": 250.00,
-    "transactionType": "Transfer",
-    "transactionDate": "2024-01-01T10:00:00Z",
-    "description": "Payment for services",
-    "status": "Completed"
-  },
-  {
-    "id": "transaction-guid-2",
-    "fromAccountId": "other-account-id",
-    "toAccountId": "account-id",
-    "amount": 100.00,
-    "transactionType": "Transfer",
-    "transactionDate": "2024-01-01T09:00:00Z",
-    "description": "Refund",
-    "status": "Completed"
-  }
-]
+{
+  "id": "fed09876-5432-1098-7654-321098765432",
+  "fromAccountId": "def56789-0123-4567-8901-23456789abcd",
+  "toAccountId": "9bc42c45-6789-4def-8901-234567890abc",
+  "amount": 100.00,
+  "transactionType": "Refund",
+  "transactionDate": "2024-08-17T09:30:00.000Z",
+  "description": "Refund",
+  "status": "Completed"
+}
 ```
 
 ---
+
+**Request:**
+
+```
+GET /api/transaction/bca98765-4321-0987-6543-210987654321
+```
+
+**Sample Response (200 OK):**
+
+```json
+{
+  "id": "bca98765-4321-0987-6543-210987654321",
+  "fromAccountId": "12345678-abcd-efgh-ijkl-9876543210mn",
+  "toAccountId": "87654321-nmlk-jihg-fedc-1234567890op",
+  "amount": 500.00,
+  "transactionType": "Transfer",
+  "transactionDate": "2024-08-16T14:15:00.000Z",
+  "description": "Invoice payment",
+  "status": "Completed"
+}
+```
+**Screenshot**
+![Transaction GetById](https://github.com/user-attachments/assets/f4d42100-ba6b-47f9-9071-3d90583ae03e)
+
+---
+
+
 
 ### ❌ Error Handling Examples
 
@@ -480,6 +794,8 @@ GET /api/transaction/history/{accountId}?page=1&pageSize=10
 **Request:**
 ```json
 POST /api/transaction/transfer
+Content-Type: application/json
+
 {
   "fromAccountNumber": "ACC638123456789",
   "toAccountNumber": "ACC638987654321",
@@ -488,15 +804,14 @@ POST /api/transaction/transfer
 }
 ```
 
-> **📷 Screenshot Placeholder**: Swagger UI showing Insufficient Funds error response
-
-*[Add screenshot of Insufficient Funds error here]*
-
-**Expected Error Response:**
+**Sample Error Response (400 Bad Request):**
 ```json
 {
-  "error": "Insufficient funds",
-  "statusCode": 400
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "Insufficient funds",
+  "traceId": "00-abc123def456789-012345678901234-00"
 }
 ```
 
@@ -505,18 +820,47 @@ POST /api/transaction/transfer
 #### 🔍 Account Not Found Error
 **Request:**
 ```
-GET /api/account/invalid-account-id
+GET /api/account/invalid-account-id-12345
 ```
 
-> **📷 Screenshot Placeholder**: Swagger UI showing Account Not Found error response
-
-*[Add screenshot of Account Not Found error here]*
-
-**Expected Error Response:**
+**Sample Error Response (404 Not Found):**
 ```json
 {
-  "error": "Account not found",
-  "statusCode": 404
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "Account not found",
+  "traceId": "00-def456abc789012-345678901234567-00"
+}
+```
+
+---
+
+#### 🚫 Validation Error
+**Request:**
+```json
+POST /api/customer
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "invalid-email",
+  "phone": ""
+}
+```
+
+**Sample Error Response (400 Bad Request):**
+```json
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "errors": {
+    "Name": ["The Name field is required."],
+    "Email": ["The Email field is not a valid e-mail address."],
+    "Phone": ["The Phone field is required."]
+  },
+  "traceId": "00-789012345abc678-901234567890123-00"
 }
 ```
 
@@ -528,7 +872,8 @@ GET /api/account/invalid-account-id
 
 > **📷 Screenshot Placeholder**: Terminal showing unit test execution results
 
-*[Add screenshot of `dotnet test` command output here]*
+<img width="1134" height="326" alt="Test" src="https://github.com/user-attachments/assets/ba5448b7-01ea-4c38-a1d6-15ba928407ab" />
+
 
 **Expected Test Output:**
 ```
