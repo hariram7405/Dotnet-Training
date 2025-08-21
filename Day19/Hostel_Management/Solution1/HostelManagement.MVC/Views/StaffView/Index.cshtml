@@ -1,0 +1,37 @@
+﻿@model List<HostelManagement.MVC.Models.StaffViewModel>
+@{
+    ViewData["Title"] = "Staff";
+}
+
+<h2>Staff</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Students Count</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var staff in Model)
+            {
+                <tr>
+                    <td>@staff.Name</td>
+                    <td>@staff.Role</td>
+                    <td>@staff.Students.Count</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@staff.StaffId">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No staff found.</p>
+}
