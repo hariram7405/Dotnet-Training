@@ -1,0 +1,64 @@
+@model List<EventManagement.MVC.Models.RegistartionViewModel>
+
+@{
+    ViewData["Title"] = "Event Details";
+    var eventItem = ViewBag.Event as EventManagement.MVC.Models.EventViewModel;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Events</a></li>
+            <li class="breadcrumb-item active">@eventItem.Title</li>
+        </ol>
+    </nav>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>🎆 @eventItem.Title</h3>
+        </div>
+        <div class="card-body">
+            <p><strong>Description:</strong> @eventItem.Description</p>
+            <p><strong>Date:</strong> @eventItem.Date.ToString("MMM dd, yyyy HH:mm")</p>
+            <p><strong>Location:</strong> <span class="badge bg-primary">@eventItem.Location</span></p>
+        </div>
+    </div>
+
+    <h4>👥 Registered Users (@Model.Count)</h4>
+    
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>Registration ID</th>
+                        <th>User Name</th>
+                        <th>Registration Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var registration in Model)
+                    {
+                        <tr>
+                            <td>@registration.Id</td>
+                            <td>@registration.UserName</td>
+                            <td>@registration.RegistrationDate.ToString("MMM dd, yyyy HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h5>No Registrations Yet</h5>
+            <p>No users have registered for this event.</p>
+        </div>
+    }
+
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-secondary">← Back to Events</a>
+    </div>
+</div>
