@@ -1613,11 +1613,11 @@ Use the `/api/Auth/register` endpoint to create users with different roles:
 *Complete Swagger UI interface showing all available endpoints with JWT authentication*
 
 ### API Filtering Functionality
-![Swagger API Filtering](Assets/Screenshot_26-8-2025_155448_localhost.jpeg)
+![Swagger API Filtering](https://github.com/hariram7405/Dotnet-Training/blob/main/Day24and25/Hostel_Management/Solution1/Assests/Screenshot_26-8-2025_155419_localhost.jpeg)
 *Demonstration of endpoint filtering and grouping in Swagger UI*
 
 ### Sample API Response
-![API Response Example](Assets/Screenshot_26-8-2025_16343_localhost.jpeg)
+![API Response Example](https://github.com/hariram7405/Dotnet-Training/blob/main/Day24and25/Hostel_Management/Solution1/Assests/Screenshot_26-8-2025_16343_localhost.jpeg)
 *Sample JSON response from the API endpoints*
 
 
