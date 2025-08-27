@@ -1605,26 +1605,20 @@ Use the `/api/Auth/register` endpoint to create users with different roles:
 - Run database migrations if needed
 
 ---
-## 📸 Screenshots
 
-### 1. Swagger 
-This screenshot shows the entire swagger UI
+## 📸 Application Screenshots
 
-![Swagger UI](Solution1\Assests\Screenshot_26-8-2025_155419_localhost.jpeg)
+### Swagger API Documentation
+![Swagger UI Overview](Assets/Screenshot_26-8-2025_155419_localhost.jpeg)
+*Complete Swagger UI interface showing all available endpoints with JWT authentication*
 
----
+### API Filtering Functionality
+![Swagger API Filtering](Assets/Screenshot_26-8-2025_155448_localhost.jpeg)
+*Demonstration of endpoint filtering and grouping in Swagger UI*
 
-### 2. Filter 
-This screenshot demonstrates the filtering functionality 
-
-![Filter by SWAGGER API](Solution1\Assests\Screenshot_26-8-2025_155448_localhost.jpeg)
-
----
-
-### 3. Sample Output
-Below is a sample output displayed after applying the filter.
-
-![Sample Output](Solution1\Assests\Screenshot_26-8-2025_16343_localhost.jpeg)
+### Sample API Response
+![API Response Example](Assets/Screenshot_26-8-2025_16343_localhost.jpeg)
+*Sample JSON response from the API endpoints*
 
 
 
