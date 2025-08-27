@@ -1609,7 +1609,7 @@ Use the `/api/Auth/register` endpoint to create users with different roles:
 ## 📸 Application Screenshots
 
 ### Swagger API Documentation
-![Swagger UI Overview](Assets/Screenshot_26-8-2025_155419_localhost.jpeg)
+![Swagger UI Overview](https://github.com/hariram7405/Dotnet-Training/blob/main/Day24and25/Hostel_Management/Solution1/Assests/Screenshot_26-8-2025_155419_localhost.jpeg)
 *Complete Swagger UI interface showing all available endpoints with JWT authentication*
 
 ### API Filtering Functionality
