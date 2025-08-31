@@ -1,0 +1,113 @@
+@model ShopTrackPro.MVC.Models.AnalyticsDashboardViewModel
+@{
+    ViewData["Title"] = "Analytics Dashboard";
+}
+
+<div class="container mt-4">
+    <h2>Analytics Dashboard</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5>Total Products</h5>
+                    <h3>@Model.Summary.TotalProducts</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Total Orders</h5>
+                    <h3>@Model.Summary.TotalOrders</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5>Total Users</h5>
+                    <h3>@Model.Summary.TotalUsers</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5>Monthly Revenue</h5>
+                    <h3>$@Model.Summary.MonthlyRevenue.ToString("F2")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Top Categories</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Products</th>
+                                <th>Avg Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var category in Model.TopCategories)
+                            {
+                                <tr>
+                                    <td>@category.Category</td>
+                                    <td>@category.ProductCount</td>
+                                    <td>$@category.AveragePrice.ToString("F2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Orders</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Status</th>
+                                <th>Items</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.RecentOrders)
+                            {
+                                <tr>
+                                    <td>#@order.Id</td>
+                                    <td>@order.Username</td>
+                                    <td>@order.Status</td>
+                                    <td>@order.ItemCount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <a asp-action="ProductSales" class="btn btn-primary">Product Sales Analysis</a>
+            <a asp-action="CustomerAnalysis" class="btn btn-success">Customer Analysis</a>
+            <a asp-action="OrderDetails" class="btn btn-info">Order Details</a>
+        </div>
+    </div>
+</div>

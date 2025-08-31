@@ -1,0 +1,42 @@
+@model ShopTrackPro.Core.DTOs.Product.ProductDto
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3>@Model.Name</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Description</h5>
+                            <p>@Model.Description</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Details</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Category:</strong> @Model.Category</li>
+                                <li><strong>Price:</strong> <span class="text-success h4">$@Model.Price.ToString("F2")</span></li>
+                                <li><strong>Product ID:</strong> @Model.Id</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Products
+                        </a>
+                        <button class="btn btn-success btn-lg">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

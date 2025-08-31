@@ -1,0 +1,41 @@
+USE ShopTrackPro;
+GO
+
+-- Users Table
+CREATE TABLE Users (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Username NVARCHAR(50) NOT NULL UNIQUE,
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    Role NVARCHAR(20) NOT NULL DEFAULT 'Customer'
+);
+
+-- Products Table
+CREATE TABLE Products (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500),
+    Price DECIMAL(10,2) NOT NULL,
+    Category NVARCHAR(50) NOT NULL
+);
+
+-- Orders Table
+CREATE TABLE Orders (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    OrderDate DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    Status NVARCHAR(20) NOT NULL DEFAULT 'Pending',
+    FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
+
+-- OrderItems Table
+CREATE TABLE OrderItems (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    OrderId INT NOT NULL,
+    ProductId INT NOT NULL,
+    Quantity INT NOT NULL,
+    FOREIGN KEY (OrderId) REFERENCES Orders(Id) ON DELETE CASCADE,
+    FOREIGN KEY (ProductId) REFERENCES Products(Id)
+);
+
+GO

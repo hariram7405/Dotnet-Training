@@ -1,0 +1,36 @@
+@model List<ShopTrackPro.MVC.Models.CustomerAnalysisViewModel>
+@{
+    ViewData["Title"] = "Customer Analysis";
+}
+
+<div class="container mt-4">
+    <h2>High Value Customers</h2>
+    
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Username</th>
+                    <th>Total Orders</th>
+                    <th>Total Spent</th>
+                    <th>Average Order Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in Model)
+                {
+                    <tr>
+                        <td>@customer.UserId</td>
+                        <td>@customer.Username</td>
+                        <td>@customer.TotalOrders</td>
+                        <td>$@customer.TotalSpent.ToString("F2")</td>
+                        <td>$@customer.AverageOrderValue.ToString("F2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
+    <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+</div>

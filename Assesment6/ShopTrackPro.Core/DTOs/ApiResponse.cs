@@ -1,0 +1,14 @@
+namespace ShopTrackPro.Core.DTOs;
+
+public class ApiResponse<T>
+{
+    public string Message { get; set; } = string.Empty;
+    public T? Data { get; set; }
+    public bool Success { get; set; } = true;
+}
+
+public class ApiResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public bool Success { get; set; } = true;
+}
