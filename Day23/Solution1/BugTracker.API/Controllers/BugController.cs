@@ -2,6 +2,7 @@
 using BugTracker.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BugTracker.API.Controllers
 {
@@ -62,7 +63,7 @@ namespace BugTracker.API.Controllers
 
         // DELETE /api/bug/{id} - Only Admin can delete bugs
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<ActionResult> DeleteAsync(int id)
         {
             var existing = await _service.GetBugByIdAsync(id);
@@ -71,6 +72,14 @@ namespace BugTracker.API.Controllers
 
             await _service.DeleteBugAsync(id);
             return Ok(new { Message = "Bug deleted successfully." });
+        }
+        [HttpGet("me")]
+        [Authorize]
+        public ActionResult GetMyClaims()
+        {
+            var username = User.Identity?.Name;
+            var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            return Ok(new { Username = username, Role = role });
         }
     }
 }

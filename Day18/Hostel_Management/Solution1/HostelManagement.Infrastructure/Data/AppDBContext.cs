@@ -15,7 +15,6 @@ namespace HostelManagement.Infrastructure.Data
         public DbSet<Student> Students { get ; set;}
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<Room> Rooms { get; set; }
-        public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
             modelbuilder.Entity<Room>().

@@ -44,7 +44,7 @@ ShopTrackPro follows the **Onion Architecture** pattern, ensuring clean separati
 - **Flexibility**: Easy to swap implementations
 - **Scalability**: Supports microservices migration
 ### Architecture Flow
-```
+```mermaid
 flowchart TB
     %% =======================
     %% Clients

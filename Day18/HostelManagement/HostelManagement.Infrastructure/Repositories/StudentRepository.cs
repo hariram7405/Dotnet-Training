@@ -30,6 +30,12 @@ namespace HostelManagement.Infrastructure.Repositories
             .Include(s => s.Staff)
             .ToList();
 
+        public void Update(Student entity)
+        {
+            _context.Students.Update(entity);
+            _context.SaveChanges();
+        }
+
         public void Delete(int id)
         {
             var student = _context.Students.Find(id);

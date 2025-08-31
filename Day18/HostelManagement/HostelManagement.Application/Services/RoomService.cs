@@ -65,6 +65,8 @@ namespace HostelManagement.Application.Services
 
             existingRoom.RoomNumber = request.RoomNumber;
             existingRoom.Capacity = request.Capacity;
+            
+            _roomRepo.Update(existingRoom);  // ✅ Save changes to database
         }
 
         private RoomResponseDTO MapToResponseDTO(Room room)
