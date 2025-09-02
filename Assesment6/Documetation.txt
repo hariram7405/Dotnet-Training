@@ -2327,7 +2327,7 @@ CREATE TABLE OrderItems (
     FOREIGN KEY (ProductId) REFERENCES Products(Id)
 );
 
-GOUSE ShopTrackPro;
+GO USE ShopTrackPro;
 GO
 
 -- Insert Users
@@ -2357,6 +2357,14 @@ INSERT INTO OrderItems (OrderId, ProductId, Quantity) VALUES
 (2, 3, 1);
 
 GO
+
+### EF Core – DB First Approach
+
+We scaffolded the DbContext and entities directly from the **ShopTrackPro** database schema (tables: Product, User, Order, OrderItem).
+
+```powershell
+Scaffold-DbContext "Server=localhost;Database=ShopTrackPro;Trusted_Connection=True;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context ShopTrackProContext -NoPluralize -Force
+
 //README FILE//
 # 🛒 ShopTrackPro - Enterprise E-Commerce Backend
 
@@ -3858,7 +3866,6 @@ dotnet test --filter "Category=Integration"
 ✅ Integration Tests: 8/8 passed
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📊 Total: 21 tests passed, 0 failed
-📈 Code Coverage: 87.5%
 ⏱️ Execution Time: 2.3 seconds
 ```
 
@@ -4144,6 +4151,9 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 ## Application Screenshots
 
 
+### Scaffolding Completed Successfully
+![Scaffolding Output](Assets/SCAFFOLDING.png)  
+*Scaffolding done for db first approach
 
 
 ### Database Tables Created Successfully
